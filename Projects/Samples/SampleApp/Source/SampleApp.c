@@ -218,8 +218,7 @@ void SampleApp_Init( uint8 task_id )
 	// Fill out the endpoint description. 定义本设备用来通信的APS层端点描述符
 	SampleApp_epDesc.endPoint = SAMPLEAPP_ENDPOINT; //指定端点号
 	SampleApp_epDesc.task_id = &SampleApp_TaskID;   //SampleApp 描述符的任务ID
-	SampleApp_epDesc.simpleDesc
-		= (SimpleDescriptionFormat_t *)&SampleApp_SimpleDesc;//SampleApp简单描述符
+	SampleApp_epDesc.simpleDesc = (SimpleDescriptionFormat_t *)&SampleApp_SimpleDesc;//SampleApp简单描述符
 	SampleApp_epDesc.latencyReq = noLatencyReqs;    //延时策略
 	
 	// Register the endpoint description with the AF
@@ -461,6 +460,17 @@ void SampleApp_SendPeriodicMessage( void )
 		HalLedSet(HAL_LED_1, HAL_LED_MODE_ON);
 		// Error occurred in request to send.
 	}
+}
+
+
+void SampleApp_SendP2PMessage(afAddrType_t* p2pDstAddr)
+{
+	if (AF_DataRequest(p2pDstAddr, &SampleApp_epDesc, SAMPLEAPP_P2P_CLUSTERID, 2, SendData, &SampleApp_TransID
+				AF_DISCV_ROUTE, AF_DEFAULT_RADIUS ) != afStatus_SUCCESS )  //传送跳数，通常设置为AF_DEFAULT_RADIUS	
+	{
+		HalLedSet(HAL_LED_1, HAL_LED_MODE_ON);
+	}
+	
 }
 
 /*********************************************************************
