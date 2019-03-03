@@ -22,7 +22,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+  PROVIDED “AS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -173,7 +173,7 @@ uint8 HalLedSet (uint8 leds, uint8 mode)
           {
             sts->mode ^= HAL_LED_MODE_ON;  /* Toggle */
           }
-          HalLedOnOff (led, sts->mode);
+          HalLedOnOff(led, sts->mode);
           leds ^= led;
         }
         led <<= 1;
@@ -250,12 +250,12 @@ void HalLedBlink (uint8 leds, uint8 numBlinks, uint8 percent, uint16 period)
     }
     else
     {
-      HalLedSet (leds, HAL_LED_MODE_ON);                    /* >= 100%, turn on */
+      HalLedSet(leds, HAL_LED_MODE_ON);                    /* >= 100%, turn on */
     }
   }
   else
   {
-    HalLedSet (leds, HAL_LED_MODE_OFF);                     /* No on time, turn off */
+    HalLedSet(leds, HAL_LED_MODE_OFF);                     /* No on time, turn off */
   }
 #elif (HAL_LED == TRUE)
   percent = (leds & HalLedState) ? HAL_LED_MODE_OFF : HAL_LED_MODE_ON;
