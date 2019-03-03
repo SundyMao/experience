@@ -452,13 +452,15 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 		{
 #if defined(ZDO_COORDINATOR)				// 协调器响应
 			;
-#else
+#else										// 终端响应
 			uint8 data = (uint8)pkt->cmd.Data[0];
-			if (data == "1")		// 正转
+			if (data != 0)		// 正转
 			{
+				HalLedBlink(HAL_LED_2, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
 			}
-			else if(data == "\0")	// 停止
+			else if(data == 0)	// 停止
 			{
+				HalLedSet(HAL_LED_2, HAL_LED_MODE_OFF);
 			}
 #endif
 		}
