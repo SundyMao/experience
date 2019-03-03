@@ -96,7 +96,9 @@ uint8 AppTitle[] = "ALD2530 LED"; //Ó¦ÓÃ³ÌÐòÃû³Æ
 const cId_t SampleApp_ClusterList[SAMPLEAPP_MAX_CLUSTERS] =
 {
 	SAMPLEAPP_PERIODIC_CLUSTERID,
-	SAMPLEAPP_FLASH_CLUSTERID
+	SAMPLEAPP_FLASH_CLUSTERID,
+	SAMPLEAPP_P2P_CLUSTERID,
+	SAMPLEAPP_USER_DEFINED_CLUSTERID
 };
 
 const SimpleDescriptionFormat_t SampleApp_SimpleDesc =
@@ -138,6 +140,7 @@ uint8 SampleApp_TransID;  // This is the unique message ID (counter)
 
 afAddrType_t SampleApp_Periodic_DstAddr;
 afAddrType_t SampleApp_Flash_DstAddr;
+afAddrType_t SampleApp_P2P_DstAddr;			// µã²¥(·¢ËÍÖÁÐ­µ÷Æ÷)
 
 aps_Group_t SampleApp_Group;
 
@@ -151,6 +154,7 @@ void SampleApp_HandleKeys( uint8 shift, uint8 keys );
 void SampleApp_MessageMSGCB( afIncomingMSGPacket_t *pckt );
 void SampleApp_SendPeriodicMessage( void );
 void SampleApp_SendFlashMessage( uint16 flashTime );
+void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, uint8 dataSize);
 
 /*********************************************************************
 * NETWORK LAYER CALLBACKS
@@ -179,6 +183,9 @@ void SampleApp_Init( uint8 task_id )
 	SampleApp_TaskID = task_id;   //osal·ÖÅäµÄÈÎÎñIDËæ×ÅÓÃ»§Ìí¼ÓÈÎÎñµÄÔö¶à¶ø¸Ä±ä
 	SampleApp_NwkState = DEV_INIT;//Éè±¸×´Ì¬Éè¶¨ÎªZDO²ãÖÐ¶¨ÒåµÄ³õÊ¼»¯×´Ì¬
 	SampleApp_TransID = 0;        //ÏûÏ¢·¢ËÍID£¨¶àÏûÏ¢Ê±ÓÐË³ÐòÖ®·Ö£©
+	
+	P0SEL &= ~0x20;					// ÉèÖÃ P0.5 ¿ÚÎªÆÕÍ¨ IO
+	P0DIR |= 0x20;					// ÉèÖÃ P0.5 ¿ÚÎªÊä³ö 
 	
 	// Device hardware initialization can be added here or in main() (Zmain.c).
 	// If the hardware is application specific - add it here.
@@ -214,6 +221,10 @@ void SampleApp_Init( uint8 task_id )
 	SampleApp_Flash_DstAddr.addrMode = (afAddrMode_t)afAddrGroup; //×éÑ°Ö·
 	SampleApp_Flash_DstAddr.endPoint = SAMPLEAPP_ENDPOINT; //Ö¸¶¨¶ËµãºÅ
 	SampleApp_Flash_DstAddr.addr.shortAddr = SAMPLEAPP_FLASH_GROUP;//×éºÅ0x0001
+	
+	SampleApp_P2P_DstAddr.addrMode = (afAddrMode_t)Addr16Bit; // µã²¥
+	SampleApp_P2P_DstAddr.endPoint = SAMPLEAPP_ENDPOINT; 
+	SampleApp_P2P_DstAddr.addr.shortAddr = 0x0000;            // Ð­µ÷Æ÷µØÖ·
 	
 	// Fill out the endpoint description. ¶¨Òå±¾Éè±¸ÓÃÀ´Í¨ÐÅµÄAPS²ã¶ËµãÃèÊö·û
 	SampleApp_epDesc.endPoint = SAMPLEAPP_ENDPOINT; //Ö¸¶¨¶ËµãºÅ
@@ -348,37 +359,44 @@ uint16 SampleApp_ProcessEvent( uint8 task_id, uint16 events )
 *
 * @return  none
 */
-void SampleApp_HandleKeys( uint8 shift, uint8 keys ) //´ËÊµÑéÃ»ÓÐÓÃµ½£¬ºóÃæÔÙ·ÖÎö
+void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 {
-	(void)shift;  // Intentionally unreferenced parameter
+	shift = shift;
 	
-	if ( keys & HAL_KEY_SW_1 )
+	if (keys & HAL_KEY_SW_6)
 	{
-		/* This key sends the Flash Command is sent to Group 1.
-		* This device will not receive the Flash Command from this
-		* device (even if it belongs to group 1).
-		*/
-		SampleApp_SendFlashMessage( SAMPLEAPP_FLASH_DURATION );
+#if defined(ZDO_COORDINATOR)				// °´Ð­µ÷Æ÷ S1 ·¢ËÍÊý¾Ý
+		SampleApp_SendPeriodicMessageWithClusterId(3, "\0", 1);	// ÒÔ¹ã²¥µÄÐÎÊ½·¢ËÍÊý¾Ý
+#else										// Â·ÓÉÆ÷ºÍÖÕ¶Ë½ÓÊÕÊý¾Ý
+		;
+#endif
 	}
-	
-	if ( keys & HAL_KEY_SW_2 )
+	if (keys & HAL_KEY_SW_7)
+	{
+#if defined(ZDO_COORDINATOR)				// °´Ð­µ÷Æ÷ S1 ·¢ËÍÊý¾Ý
+		SampleApp_SendPeriodicMessageWithClusterId(3, "1", 1);	// ÒÔ¹ã²¥µÄÐÎÊ½·¢ËÍÊý¾Ý
+#else										// Â·ÓÉÆ÷ºÍÖÕ¶Ë½ÓÊÕÊý¾Ý
+		;
+#endif		
+	}
+
+	if (keys & HAL_KEY_SW_1)
 	{
 		/* The Flashr Command is sent to Group 1.
-		* This key toggles this device in and out of group 1.
-		* If this device doesn't belong to group 1, this application
-		* will not receive the Flash command sent to group 1.
-		*/
-		aps_Group_t *grp;
-		grp = aps_FindGroup( SAMPLEAPP_ENDPOINT, SAMPLEAPP_FLASH_GROUP );
-		if ( grp )
+		 * This key toggles this device in and out of group 1.
+		 * If this device doesn't belong to group 1, this application
+		 * will not receive the Flash command sent to group 1.
+		 */
+		aps_Group_t *grp = aps_FindGroup( SAMPLEAPP_ENDPOINT, SAMPLEAPP_FLASH_GROUP );
+		if (grp)
 		{
 			// Remove from the group
-			aps_RemoveGroup( SAMPLEAPP_ENDPOINT, SAMPLEAPP_FLASH_GROUP );
+			aps_RemoveGroup(SAMPLEAPP_ENDPOINT, SAMPLEAPP_FLASH_GROUP);
 		}
 		else
 		{
 			// Add to the flash group
-			aps_AddGroup( SAMPLEAPP_ENDPOINT, &SampleApp_Group );
+			aps_AddGroup(SAMPLEAPP_ENDPOINT, &SampleApp_Group);
 		}
 	}
 }
@@ -399,34 +417,51 @@ void SampleApp_HandleKeys( uint8 shift, uint8 keys ) //´ËÊµÑéÃ»ÓÐÓÃµ½£¬ºóÃæÔÙ·ÖÎ
 * @return  none
 */
 //½ÓÊÕÊý¾Ý£¬²ÎÊýÎª½ÓÊÕµ½µÄÊý¾Ý
-void SampleApp_MessageMSGCB( afIncomingMSGPacket_t *pkt )
+void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 {
-	uint16 flashTime;
-	byte buf[3]; 
-	
 	switch ( pkt->clusterId ) //ÅÐ¶Ï´ØID
 	{
     case SAMPLEAPP_PERIODIC_CLUSTERID: //ÊÕµ½¹ã²¥Êý¾Ý
-		osal_memset(buf, 0 , 3);
-		osal_memcpy(buf, pkt->cmd.Data, 2); //¸´ÖÆÊý¾Ýµ½»º³åÇøÖÐ
-		
-		if(buf[0]=='D' && buf[1]=='1')      //ÅÐ¶ÏÊÕµ½µÄÊý¾ÝÊÇ·ñÎª"D1"         
 		{
-			HalLedBlink(HAL_LED_1, 0, 50, 500);//Èç¹ûÊÇÔòLed1¼ä¸ô500msÉÁË¸
-#if defined(ZDO_COORDINATOR) //Ð­µ÷Æ÷ÊÕµ½"D1"ºó,·µ»Ø"D1"¸øÖÕ¶Ë£¬ÈÃÖÕ¶ËLed1Ò²ÉÁË¸
-			SampleApp_SendPeriodicMessage();
+			byte buf[3];
+			osal_memset(buf, 0 , 3);
+			osal_memcpy(buf, pkt->cmd.Data, 2); //¸´ÖÆÊý¾Ýµ½»º³åÇøÖÐ
+			
+			if(buf[0]=='D' && buf[1]=='1')      //ÅÐ¶ÏÊÕµ½µÄÊý¾ÝÊÇ·ñÎª"D1"
+			{
+				HalLedBlink(HAL_LED_1, 0, 50, 500);	//Èç¹ûÊÇÔòLed1¼ä¸ô500msÉÁË¸
+#if defined(ZDO_COORDINATOR)						//Ð­µ÷Æ÷ÊÕµ½"D1"ºó,·µ»Ø"D1"¸øÖÕ¶Ë£¬ÈÃÖÕ¶ËLed1Ò²ÉÁË¸
+				SampleApp_SendPeriodicMessage();
 #endif
-		}
-		else
-		{
-			HalLedSet(HAL_LED_1, HAL_LED_MODE_ON);                   
+			}
+			else
+			{
+				HalLedSet(HAL_LED_1, HAL_LED_MODE_ON);
+			}
 		}
 		break;
 		
     case SAMPLEAPP_FLASH_CLUSTERID: //ÊÕµ½×é²¥Êý¾Ý
-		flashTime = BUILD_UINT16(pkt->cmd.Data[1], pkt->cmd.Data[2] );
-		HalLedBlink( HAL_LED_4, 4, 50, (flashTime / 4) );
+		{
+			uint16 flashTime = BUILD_UINT16(pkt->cmd.Data[1], pkt->cmd.Data[2]);
+			HalLedBlink(HAL_LED_4, 4, 50, (flashTime / 4));
+		}
 		break;
+		
+	case SAMPLEAPP_USER_DEFINED_CLUSTERID:
+		{
+#if defined(ZDO_COORDINATOR)				// Ð­µ÷Æ÷ÏìÓ¦
+			;
+#else
+			uint8 data = (uint8)pkt->cmd.Data[0];
+			if (data == "1")		// Õý×ª
+			{
+			}
+			else if(data == "\0")	// Í£Ö¹
+			{
+			}
+#endif
+		}
 	}
 }
 
@@ -445,7 +480,7 @@ void SampleApp_SendPeriodicMessage( void )
 	byte SendData[3]="D1";
 	
 	// µ÷ÓÃAF_DataRequest½«Êý¾ÝÎÞÏß¹ã²¥³öÈ¥
-	if( AF_DataRequest( &SampleApp_Periodic_DstAddr,//·¢ËÍÄ¿µÄµØÖ·£«¶ËµãµØÖ·ºÍ´«ËÍÄ£Ê½
+	if(AF_DataRequest( &SampleApp_Periodic_DstAddr,//·¢ËÍÄ¿µÄµØÖ·£«¶ËµãµØÖ·ºÍ´«ËÍÄ£Ê½
                        &SampleApp_epDesc,//Ô´(´ð¸´»òÈ·ÈÏ)ÖÕ¶ËµÄÃèÊö£¨±ÈÈç²Ù×÷ÏµÍ³ÖÐÈÎÎñIDµÈ£©Ô´EP
                        SAMPLEAPP_PERIODIC_CLUSTERID, //±»ProfileÖ¸¶¨µÄÓÐÐ§µÄ¼¯ÈººÅ
                        2,       // ·¢ËÍÊý¾Ý³¤¶È
@@ -462,17 +497,6 @@ void SampleApp_SendPeriodicMessage( void )
 	}
 }
 
-
-void SampleApp_SendP2PMessage(afAddrType_t* p2pDstAddr)
-{
-	if (AF_DataRequest(p2pDstAddr, &SampleApp_epDesc, SAMPLEAPP_P2P_CLUSTERID, 2, SendData, &SampleApp_TransID
-				AF_DISCV_ROUTE, AF_DEFAULT_RADIUS ) != afStatus_SUCCESS )  //´«ËÍÌøÊý£¬Í¨³£ÉèÖÃÎªAF_DEFAULT_RADIUS	
-	{
-		HalLedSet(HAL_LED_1, HAL_LED_MODE_ON);
-	}
-	
-}
-
 /*********************************************************************
 * @fn      SampleApp_SendFlashMessage
 *
@@ -482,20 +506,38 @@ void SampleApp_SendP2PMessage(afAddrType_t* p2pDstAddr)
 *
 * @return  none
 */
-void SampleApp_SendFlashMessage( uint16 flashTime ) //´ËÊµÑéÃ»ÓÐÓÃµ½£¬ºóÃæÔÙ·ÖÎö
+void SampleApp_SendFlashMessage( uint16 flashTime )
 {
 	uint8 buffer[3];
 	buffer[0] = (uint8)(SampleAppFlashCounter++);
 	buffer[1] = LO_UINT16( flashTime );
 	buffer[2] = HI_UINT16( flashTime );
 	
-	if ( AF_DataRequest( &SampleApp_Flash_DstAddr, &SampleApp_epDesc,
-						SAMPLEAPP_FLASH_CLUSTERID,
-						3,
-						buffer,
-						&SampleApp_TransID,
-						AF_DISCV_ROUTE,
-						AF_DEFAULT_RADIUS ) == afStatus_SUCCESS )
+	if (AF_DataRequest( &SampleApp_Flash_DstAddr, &SampleApp_epDesc,
+						SAMPLEAPP_FLASH_CLUSTERID, 3, buffer, &SampleApp_TransID,
+						AF_DISCV_ROUTE, AF_DEFAULT_RADIUS ) == afStatus_SUCCESS)
+	{
+	}
+	else
+	{
+		// Error occurred in request to send.
+	}
+}
+
+/*********************************************************************
+* @fn      SampleApp_SendP2PMessage
+*
+* @brief   Send message to all end node with special cluster id.
+*
+* @param   flashTime - in milliseconds
+*
+* @return  none
+*/
+void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, uint8 dataSize)
+{
+	if (AF_DataRequest( &SampleApp_Periodic_DstAddr, &SampleApp_epDesc,
+						clusterId, dataSize, data,
+						&SampleApp_TransID, AF_DISCV_ROUTE, AF_DEFAULT_RADIUS ) == afStatus_SUCCESS )
 	{
 	}
 	else
