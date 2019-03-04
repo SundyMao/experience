@@ -211,72 +211,72 @@ void HalKeyInit( void )
  *
  * @return  None
  **************************************************************************************************/
-void HalKeyConfig (bool interruptEnable, halKeyCBack_t cback)
+void HalKeyConfig(bool interruptEnable, halKeyCBack_t cback)
 {
-  /* Enable/Disable Interrupt or */
-  Hal_KeyIntEnable = interruptEnable;
+	/* Enable/Disable Interrupt or */
+	Hal_KeyIntEnable = interruptEnable;
 
-  /* Register the callback fucntion */
-  pHalKeyProcessFunction = cback;
+	/* Register the callback fucntion */
+	pHalKeyProcessFunction = cback;
 
-  /* Determine if interrupt is enable or not */
-  if (Hal_KeyIntEnable)
-  {
-    /* Rising/Falling edge configuratinn */
-
-    PICTL &= ~(HAL_KEY_SW_6_EDGEBIT);    /* Clear the edge bit */
-    /* For falling edge, the bit must be set. */
-  #if (HAL_KEY_SW_6_EDGE == HAL_KEY_FALLING_EDGE)
-    PICTL |= HAL_KEY_SW_6_EDGEBIT;
-  #endif
-
-
-    /* Interrupt configuration:
-     * - Enable interrupt generation at the port
-     * - Enable CPU interrupt
-     * - Clear any pending interrupt
-     */
-    HAL_KEY_SW_6_ICTL |= HAL_KEY_SW_6_ICTLBIT;
-    HAL_KEY_SW_6_IEN |= HAL_KEY_SW_6_IENBIT;
-    HAL_KEY_SW_6_PXIFG = ~(HAL_KEY_SW_6_BIT);
+	/* Determine if interrupt is enable or not */
+	if (Hal_KeyIntEnable)
+	{
+		/* Rising/Falling edge configuratinn */
+		
+		PICTL &= ~(HAL_KEY_SW_6_EDGEBIT);    /* Clear the edge bit */
+		/* For falling edge, the bit must be set. */
+#if (HAL_KEY_SW_6_EDGE == HAL_KEY_FALLING_EDGE)
+		PICTL |= HAL_KEY_SW_6_EDGEBIT;
+#endif
 
 
-
-    /* Rising/Falling edge configuratinn */
-
-    HAL_KEY_JOY_MOVE_ICTL &= ~(HAL_KEY_JOY_MOVE_EDGEBIT);    /* Clear the edge bit */
-    /* For falling edge, the bit must be set. */
-  #if (HAL_KEY_JOY_MOVE_EDGE == HAL_KEY_FALLING_EDGE)
-    HAL_KEY_JOY_MOVE_ICTL |= HAL_KEY_JOY_MOVE_EDGEBIT;
-  #endif
-
-
-    /* Interrupt configuration:
-     * - Enable interrupt generation at the port
-     * - Enable CPU interrupt
-     * - Clear any pending interrupt
-     */
-    HAL_KEY_JOY_MOVE_ICTL |= HAL_KEY_JOY_MOVE_ICTLBIT;
-    HAL_KEY_JOY_MOVE_IEN |= HAL_KEY_JOY_MOVE_IENBIT;
-    HAL_KEY_JOY_MOVE_PXIFG = ~(HAL_KEY_JOY_MOVE_BIT);
+		/* Interrupt configuration:
+		* - Enable interrupt generation at the port
+		* - Enable CPU interrupt
+		* - Clear any pending interrupt
+		*/
+		HAL_KEY_SW_6_ICTL |= HAL_KEY_SW_6_ICTLBIT;
+		HAL_KEY_SW_6_IEN |= HAL_KEY_SW_6_IENBIT;
+		HAL_KEY_SW_6_PXIFG = ~(HAL_KEY_SW_6_BIT);
 
 
-    /* Do this only after the hal_key is configured - to work with sleep stuff */
-    if (HalKeyConfigured == TRUE)
-    {
-      osal_stop_timerEx( Hal_TaskID, HAL_KEY_EVENT);  /* Cancel polling if active */
-    }
-  }
-  else    /* Interrupts NOT enabled */
-  {
-    HAL_KEY_SW_6_ICTL &= ~(HAL_KEY_SW_6_ICTLBIT); /* don't generate interrupt */
-    HAL_KEY_SW_6_IEN &= ~(HAL_KEY_SW_6_IENBIT);   /* Clear interrupt enable bit */
 
-    osal_start_timerEx (Hal_TaskID, HAL_KEY_EVENT, HAL_KEY_POLLING_VALUE);    /* Kick off polling */
-  }
+		/* Rising/Falling edge configuratinn */
 
-  /* Key now is configured */
-  HalKeyConfigured = TRUE;
+		HAL_KEY_JOY_MOVE_ICTL &= ~(HAL_KEY_JOY_MOVE_EDGEBIT);    /* Clear the edge bit */
+		/* For falling edge, the bit must be set. */
+#if (HAL_KEY_JOY_MOVE_EDGE == HAL_KEY_FALLING_EDGE)
+		HAL_KEY_JOY_MOVE_ICTL |= HAL_KEY_JOY_MOVE_EDGEBIT;
+#endif
+
+
+		/* Interrupt configuration:
+		* - Enable interrupt generation at the port
+		* - Enable CPU interrupt
+		* - Clear any pending interrupt
+		*/
+		HAL_KEY_JOY_MOVE_ICTL |= HAL_KEY_JOY_MOVE_ICTLBIT;
+		HAL_KEY_JOY_MOVE_IEN |= HAL_KEY_JOY_MOVE_IENBIT;
+		HAL_KEY_JOY_MOVE_PXIFG = ~(HAL_KEY_JOY_MOVE_BIT);
+
+
+		/* Do this only after the hal_key is configured - to work with sleep stuff */
+		if (HalKeyConfigured == TRUE)
+		{
+			osal_stop_timerEx( Hal_TaskID, HAL_KEY_EVENT);  /* Cancel polling if active */
+		}
+	}
+	else    /* Interrupts NOT enabled */
+	{
+		HAL_KEY_SW_6_ICTL &= ~(HAL_KEY_SW_6_ICTLBIT); /* don't generate interrupt */
+		HAL_KEY_SW_6_IEN &= ~(HAL_KEY_SW_6_IENBIT);   /* Clear interrupt enable bit */
+
+		osal_start_timerEx (Hal_TaskID, HAL_KEY_EVENT, HAL_KEY_POLLING_VALUE);    /* Kick off polling */
+	}
+
+	/* Key now is configured */
+	HalKeyConfigured = TRUE;
 }
 
 

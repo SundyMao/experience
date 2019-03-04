@@ -365,7 +365,7 @@ void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 	
 	if (keys & HAL_KEY_SW_6)
 	{
-#if defined(ZDO_COORDINATOR)				// 协调器响应 S2 按下的消息
+#if defined(ZDO_COORDINATOR)				// 协调器响应 S1 按下的消息
 		SampleApp_SendPeriodicMessageWithClusterId(SAMPLEAPP_USER_DEFINED_CLUSTERID, "\0", 1);	// 以广播的形式发送数据
 #else										// 路由器终端不响应 S1 按下的消息
 		;
@@ -419,7 +419,7 @@ void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 //接收数据，参数为接收到的数据
 void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 {
-	switch ( pkt->clusterId ) //判断簇ID
+	switch (pkt->clusterId) //判断簇ID
 	{
     case SAMPLEAPP_PERIODIC_CLUSTERID: //收到广播数据
 		{
