@@ -365,17 +365,17 @@ void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 	
 	if (keys & HAL_KEY_SW_6)
 	{
-#if defined(ZDO_COORDINATOR)				// 按协调器 S1 发送数据
-		SampleApp_SendPeriodicMessageWithClusterId(3, "\0", 1);	// 以广播的形式发送数据
-#else										// 路由器和终端接收数据
+#if defined(ZDO_COORDINATOR)				// 协调器响应 S2 按下的消息
+		SampleApp_SendPeriodicMessageWithClusterId(SAMPLEAPP_USER_DEFINED_CLUSTERID, "\0", 1);	// 以广播的形式发送数据
+#else										// 路由器终端不响应 S1 按下的消息
 		;
 #endif
 	}
 	if (keys & HAL_KEY_SW_7)
 	{
-#if defined(ZDO_COORDINATOR)				// 按协调器 S1 发送数据
-		SampleApp_SendPeriodicMessageWithClusterId(3, "1", 1);	// 以广播的形式发送数据
-#else										// 路由器和终端接收数据
+#if defined(ZDO_COORDINATOR)				// 协调器响应 S2 按下的消息
+		SampleApp_SendPeriodicMessageWithClusterId(SAMPLEAPP_USER_DEFINED_CLUSTERID, "1", 1);	// 以广播的形式发送数据
+#else										// 路由器终端不响应 S1 按下的消息
 		;
 #endif		
 	}
@@ -464,6 +464,9 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 			}
 #endif
 		}
+		break;
+	default:
+		break;
 	}
 }
 
