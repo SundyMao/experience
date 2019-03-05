@@ -291,14 +291,12 @@ uint16 SampleApp_ProcessEvent( uint8 task_id, uint16 events )
 				//同时完成对协调器，路由器，终端的设置
 				SampleApp_NwkState = (devStates_t)(MSGpkt->hdr.status);
 				//if ( (SampleApp_NwkState == DEV_ZB_COORD)//实验中协调器只接收数据所以取消发送事件
-				if ( (SampleApp_NwkState == DEV_ROUTER) || (SampleApp_NwkState == DEV_END_DEVICE) )
+				if ((SampleApp_NwkState == DEV_ROUTER) || (SampleApp_NwkState == DEV_END_DEVICE))
 				{
 					// Start sending the periodic message in a regular interval.
-					//这个定时器只是为发送周期信息开启的，设备启动初始化后从这里开始
-					//触发第一个周期信息的发送，然后周而复始下去
-					osal_start_timerEx( SampleApp_TaskID,
-									   SAMPLEAPP_SEND_PERIODIC_MSG_EVT,
-									   SAMPLEAPP_SEND_PERIODIC_MSG_TIMEOUT );
+					// 这个定时器只是为发送周期信息开启的，设备启动初始化后从这里开始
+					// 触发第一个周期信息的发送，然后周而复始下去
+					osal_start_timerEx(SampleApp_TaskID, SAMPLEAPP_SEND_PERIODIC_MSG_EVT, SAMPLEAPP_SEND_PERIODIC_MSG_TIMEOUT );
 				}
 				else
 				{
@@ -327,9 +325,9 @@ uint16 SampleApp_ProcessEvent( uint8 task_id, uint16 events )
 	if ( events & SAMPLEAPP_SEND_PERIODIC_MSG_EVT )
 	{
 		// Send the periodic message 处理周期性事件，
-		//利用SampleApp_SendPeriodicMessage()处理完当前的周期性事件，然后启动定时器
-		//开启下一个周期性事情，这样一种循环下去，也即是上面说的周期性事件了，
-		//可以做为传感器定时采集、上传任务
+		// 利用SampleApp_SendPeriodicMessage()处理完当前的周期性事件，然后启动定时器
+		// 开启下一个周期性事情，这样一种循环下去，也即是上面说的周期性事件了，
+		// 可以做为传感器定时采集、上传任务
 		SampleApp_SendPeriodicMessage();
 		
 		// Setup to send message again in normal period (+ a little jitter)
@@ -367,37 +365,17 @@ void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 	{
 #if defined(ZDO_COORDINATOR)				// 协调器响应 S1 按下的消息
 		SampleApp_SendPeriodicMessageWithClusterId(SAMPLEAPP_USER_DEFINED_CLUSTERID, "\0", 1);	// 以广播的形式发送数据
-#else										// 路由器终端不响应 S1 按下的消息
+#else										// 路由器 终端不响应 S1 按下的消息
 		;
 #endif
 	}
-	if (keys & HAL_KEY_SW_7)
+	if (keys & HAL_KEY_SW_1)
 	{
 #if defined(ZDO_COORDINATOR)				// 协调器响应 S2 按下的消息
 		SampleApp_SendPeriodicMessageWithClusterId(SAMPLEAPP_USER_DEFINED_CLUSTERID, "1", 1);	// 以广播的形式发送数据
-#else										// 路由器终端不响应 S1 按下的消息
+#else										// 路由器 终端不响应 S2 按下的消息
 		;
 #endif		
-	}
-
-	if (keys & HAL_KEY_SW_1)
-	{
-		/* The Flashr Command is sent to Group 1.
-		 * This key toggles this device in and out of group 1.
-		 * If this device doesn't belong to group 1, this application
-		 * will not receive the Flash command sent to group 1.
-		 */
-		aps_Group_t *grp = aps_FindGroup( SAMPLEAPP_ENDPOINT, SAMPLEAPP_FLASH_GROUP );
-		if (grp)
-		{
-			// Remove from the group
-			aps_RemoveGroup(SAMPLEAPP_ENDPOINT, SAMPLEAPP_FLASH_GROUP);
-		}
-		else
-		{
-			// Add to the flash group
-			aps_AddGroup(SAMPLEAPP_ENDPOINT, &SampleApp_Group);
-		}
 	}
 }
 
@@ -430,9 +408,6 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 			if(buf[0]=='D' && buf[1]=='1')      //判断收到的数据是否为"D1"
 			{
 				HalLedBlink(HAL_LED_1, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
-#if defined(ZDO_COORDINATOR)						//协调器收到"D1"后,返回"D1"给终端，让终端Led1也闪烁
-				SampleApp_SendPeriodicMessage();
-#endif
 			}
 			else
 			{
@@ -454,13 +429,13 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 			;
 #else										// 终端响应
 			uint8 data = (uint8)pkt->cmd.Data[0];
-			if (data != 0)		// 正转
+			if (data != 0)		// blink
 			{
-				HalLedBlink(HAL_LED_2, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
+				HalLedBlink(HAL_LED_1, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
 			}
-			else if(data == 0)	// 停止
+			else if(data == 0)	// no blink
 			{
-				HalLedSet(HAL_LED_2, HAL_LED_MODE_OFF);
+				HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
 			}
 #endif
 		}
@@ -480,19 +455,19 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 * @return  none
 */
 //分析发送周期信息
-void SampleApp_SendPeriodicMessage( void )
+void SampleApp_SendPeriodicMessage(void)
 {
 	byte SendData[3]="D1";
 	
 	// 调用AF_DataRequest将数据无线广播出去
-	if(AF_DataRequest( &SampleApp_Periodic_DstAddr,//发送目的地址＋端点地址和传送模式
-                       &SampleApp_epDesc,//源(答复或确认)终端的描述（比如操作系统中任务ID等）源EP
-                       SAMPLEAPP_PERIODIC_CLUSTERID, //被Profile指定的有效的集群号
-                       2,       // 发送数据长度
-                       SendData,// 发送数据缓冲区
-                       &SampleApp_TransID,     // 任务ID号
-                       AF_DISCV_ROUTE,      // 有效位掩码的发送选项
-                       AF_DEFAULT_RADIUS ) == afStatus_SUCCESS )  //传送跳数，通常设置为AF_DEFAULT_RADIUS
+	if(AF_DataRequest(&SampleApp_Periodic_DstAddr,					// 发送目的地址＋端点地址和传送模式
+                       &SampleApp_epDesc,							// 源(答复或确认)终端的描述（比如操作系统中任务ID等）源EP
+                       SAMPLEAPP_PERIODIC_CLUSTERID,				// 被Profile指定的有效的集群号
+                       2,											// 发送数据长度
+                       SendData,									// 发送数据缓冲区
+                       &SampleApp_TransID,							// 任务ID号
+                       AF_DISCV_ROUTE,								// 有效位掩码的发送选项
+                       AF_DEFAULT_RADIUS ) == afStatus_SUCCESS )	// 传送跳数，通常设置为AF_DEFAULT_RADIUS
 	{
 	}
 	else
@@ -518,7 +493,7 @@ void SampleApp_SendFlashMessage( uint16 flashTime )
 	buffer[1] = LO_UINT16( flashTime );
 	buffer[2] = HI_UINT16( flashTime );
 	
-	if (AF_DataRequest( &SampleApp_Flash_DstAddr, &SampleApp_epDesc,
+	if (AF_DataRequest(&SampleApp_Flash_DstAddr, &SampleApp_epDesc,
 						SAMPLEAPP_FLASH_CLUSTERID, 3, buffer, &SampleApp_TransID,
 						AF_DISCV_ROUTE, AF_DEFAULT_RADIUS ) == afStatus_SUCCESS)
 	{
@@ -530,17 +505,17 @@ void SampleApp_SendFlashMessage( uint16 flashTime )
 }
 
 /*********************************************************************
-* @fn      SampleApp_SendP2PMessage
+* @fn      SampleApp_SendPeriodicMessageWithClusterId
 *
 * @brief   Send message to all end node with special cluster id.
 *
-* @param   flashTime - in milliseconds
+* @param   clusterId data dataSize
 *
 * @return  none
 */
 void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, uint8 dataSize)
 {
-	if (AF_DataRequest( &SampleApp_Periodic_DstAddr, &SampleApp_epDesc,
+	if (AF_DataRequest(&SampleApp_Periodic_DstAddr, &SampleApp_epDesc,
 						clusterId, dataSize, data,
 						&SampleApp_TransID, AF_DISCV_ROUTE, AF_DEFAULT_RADIUS ) == afStatus_SUCCESS )
 	{
