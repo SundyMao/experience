@@ -106,11 +106,11 @@ const SimpleDescriptionFormat_t SampleApp_SimpleDesc =
 	SAMPLEAPP_ENDPOINT,					// int Endpoint;
 	SAMPLEAPP_PROFID,					// uint16 AppProfId[2];
 	SAMPLEAPP_DEVICEID,					// uint16 AppDeviceId[2];
-	SAMPLEAPP_DEVICE_VERSION,			// int   AppDevVer:4;
-	SAMPLEAPP_FLAGS,					// int   AppFlags:4;
-	AppClusterId_max,					// uint8  AppNumInClusters;
+	SAMPLEAPP_DEVICE_VERSION,			// int AppDevVer:4;
+	SAMPLEAPP_FLAGS,					// int AppFlags:4;
+	AppClusterId_max,					// uint8 AppNumInClusters;
 	(cId_t *)SampleApp_ClusterList,		// uint8 *pAppInClusterList;
-	AppClusterId_max,					// uint8  AppNumOutClusters;
+	AppClusterId_max,					// uint8 AppNumOutClusters;
 	(cId_t *)SampleApp_ClusterList		// uint8 *pAppOutClusterList;
 };
 
