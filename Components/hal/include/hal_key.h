@@ -22,7 +22,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
+  PROVIDED “AS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE, 
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -67,20 +67,8 @@ extern "C"
 #define HAL_KEY_STATE_SHIFT           0x01
 
 /* Switches (keys) */
-#define HAL_KEY_SW_1 0x01  // Joystick up
-#define HAL_KEY_SW_2 0x02  // Joystick right
-#define HAL_KEY_SW_5 0x04  // Joystick center
-#define HAL_KEY_SW_4 0x08  // Joystick left
-#define HAL_KEY_SW_3 0x10  // Joystick down
+#define HAL_KEY_SW_1 0x01  // Button S2 if available
 #define HAL_KEY_SW_6 0x20  // Button S1 if available
-#define HAL_KEY_SW_7 0x40  // Button S2 if available
-
-/* Joystick */
-#define HAL_KEY_UP     0x01  // Joystick up
-#define HAL_KEY_RIGHT  0x02  // Joystick right
-#define HAL_KEY_CENTER 0x04  // Joystick center
-#define HAL_KEY_LEFT   0x08  // Joystick left
-#define HAL_KEY_DOWN   0x10  // Joystick down
 
 /**************************************************************************************************
  * TYPEDEFS

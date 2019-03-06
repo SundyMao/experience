@@ -271,18 +271,18 @@ uint16 SampleApp_ProcessEvent( uint8 task_id, uint16 events )
 	{
 		//接收属于本应用任务SampleApp的消息，以SampleApp_TaskID标记
 		MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( SampleApp_TaskID );
-		while ( MSGpkt )
+		while (MSGpkt)
 		{
-			switch ( MSGpkt->hdr.event )
+			switch (MSGpkt->hdr.event)
 			{
 				// Received when a key is pressed
-			case KEY_CHANGE://按键事件
-				SampleApp_HandleKeys( ((keyChange_t *)MSGpkt)->state, ((keyChange_t *)MSGpkt)->keys );
+			case KEY_CHANGE:						//按键事件
+				SampleApp_HandleKeys(((keyChange_t *)MSGpkt)->state, ((keyChange_t *)MSGpkt)->keys);
 				break;
 				
 				// Received when a messages is received (OTA) for this endpoint
-			case AF_INCOMING_MSG_CMD://接收数据事件,调用函数AF_DataRequest()接收数据
-				SampleApp_MessageMSGCB( MSGpkt );//调用回调函数对收到的数据进行处理
+			case AF_INCOMING_MSG_CMD:				//接收数据事件,调用函数AF_DataRequest()接收数据
+				SampleApp_MessageMSGCB(MSGpkt);		//调用回调函数对收到的数据进行处理
 				break;
 				
 				// Received whenever the device changes state in the network
@@ -331,8 +331,8 @@ uint16 SampleApp_ProcessEvent( uint8 task_id, uint16 events )
 		SampleApp_SendPeriodicMessage();
 		
 		// Setup to send message again in normal period (+ a little jitter)
-		osal_start_timerEx( SampleApp_TaskID, SAMPLEAPP_SEND_PERIODIC_MSG_EVT,
-						   (SAMPLEAPP_SEND_PERIODIC_MSG_TIMEOUT + (osal_rand() & 0x00FF)) );
+		osal_start_timerEx(SampleApp_TaskID, SAMPLEAPP_SEND_PERIODIC_MSG_EVT,
+						   (SAMPLEAPP_SEND_PERIODIC_MSG_TIMEOUT + (osal_rand() & 0x00FF)));
 		
 		// return unprocessed events 返回未处理的事件
 		return (events ^ SAMPLEAPP_SEND_PERIODIC_MSG_EVT);
@@ -405,7 +405,7 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 			osal_memset(buf, 0 , 3);
 			osal_memcpy(buf, pkt->cmd.Data, 2); //复制数据到缓冲区中
 			
-			if(buf[0]=='D' && buf[1]=='1')      //判断收到的数据是否为"D1"
+			if(buf[0]=='D' && buf[1]=='1')				//判断收到的数据是否为"D1"
 			{
 				HalLedBlink(HAL_LED_1, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
 			}

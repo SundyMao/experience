@@ -24,7 +24,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+  PROVIDED “AS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -239,37 +239,21 @@ uint8 OnBoard_SendKeys( uint8 keys, uint8 state )
  *
  * @return  void
  *********************************************************************/
-void OnBoard_KeyCallback ( uint8 keys, uint8 state )
+void OnBoard_KeyCallback (uint8 keys, uint8 state)
 {
   uint8 shift;
   (void)state;
 
   shift = (keys & HAL_KEY_SW_6) ? true : false;
 
-  if ( OnBoard_SendKeys( keys, shift ) != ZSuccess )
+  if (OnBoard_SendKeys(keys, shift) != ZSuccess)
   {
     // Process SW1 here
-    if ( keys & HAL_KEY_SW_1 )  // Switch 1
-    {
-    }
-    // Process SW2 here
-    if ( keys & HAL_KEY_SW_2 )  // Switch 2
-    {
-    }
-    // Process SW3 here
-    if ( keys & HAL_KEY_SW_3 )  // Switch 3
-    {
-    }
-    // Process SW4 here
-    if ( keys & HAL_KEY_SW_4 )  // Switch 4
-    {
-    }
-    // Process SW5 here
-    if ( keys & HAL_KEY_SW_5 )  // Switch 5
+    if (keys & HAL_KEY_SW_1)  // Switch 1
     {
     }
     // Process SW6 here
-    if ( keys & HAL_KEY_SW_6 )  // Switch 6
+    if (keys & HAL_KEY_SW_6)  // Switch 6
     {
     }
   }

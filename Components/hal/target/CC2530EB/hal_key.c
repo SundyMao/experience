@@ -298,11 +298,6 @@ uint8 HalKeyRead ( void )
     keys |= HAL_KEY_SW_6;
   }
 
-/*  if ((HAL_KEY_JOY_MOVE_PORT & HAL_KEY_JOY_MOVE_BIT))  // Key is active low 
-  {
-    keys |= halGetJoyKeyInput();
-  }
-*/
   return keys;
 }
 
@@ -320,11 +315,6 @@ void HalKeyPoll (void)
 {
   uint8 keys = 0;
 
-/* if ((HAL_KEY_JOY_MOVE_PORT & HAL_KEY_JOY_MOVE_BIT))  // Key is active HIGH 
-  {
-    keys = halGetJoyKeyInput();
-  }
-*/
   if (!HAL_PUSH_BUTTON2())//S0
   {
     keys |= HAL_KEY_SW_1; 
@@ -355,60 +345,6 @@ void HalKeyPoll (void)
     (pHalKeyProcessFunction) (keys, HAL_KEY_STATE_NORMAL);
   }
 }
-
-/**************************************************************************************************
- * @fn      halGetJoyKeyInput
- *
- * @brief   Map the ADC value to its corresponding key.
- *
- * @param   None
- *
- * @return  keys - current joy key status
- **************************************************************************************************/
-uint8 halGetJoyKeyInput(void)
-{
-  /* The joystick control is encoded as an analog voltage.
-   * Read the JOY_LEVEL analog value and map it to joy movement.
-   */
-  uint8 adc;
-  uint8 ksave0 = 0;
-  uint8 ksave1;
-
-  /* Keep on reading the ADC until two consecutive key decisions are the same. */
-  do
-  {
-    ksave1 = ksave0;    /* save previouse key reading */
-
-    adc = HalAdcRead (HAL_KEY_JOY_CHN, HAL_ADC_RESOLUTION_8);
-
-    if ((adc >= 2) && (adc <= 38))
-    {
-       ksave0 |= HAL_KEY_UP;
-    }
-    else if ((adc >= 74) && (adc <= 88))
-    {
-      ksave0 |= HAL_KEY_RIGHT;
-    }
-    else if ((adc >= 60) && (adc <= 73))
-    {
-      ksave0 |= HAL_KEY_LEFT;
-    }
-    else if ((adc >= 39) && (adc <= 59))
-    {
-      ksave0 |= HAL_KEY_DOWN;
-    }
-    else if ((adc >= 89) && (adc <= 100))
-    {
-      ksave0 |= HAL_KEY_CENTER;
-    }
-  } while (ksave0 != ksave1);
-
-  return ksave0;
-}
-
-
-
-
 
 /**************************************************************************************************
  * @fn      halProcessKeyInterrupt
