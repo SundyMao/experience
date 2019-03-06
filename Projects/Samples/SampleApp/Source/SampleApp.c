@@ -93,25 +93,25 @@ reception of the flash command.
 uint8 AppTitle[] = "ALD2530 LED"; //应用程序名称
 
 // This list should be filled with Application specific Cluster IDs.
-const cId_t SampleApp_ClusterList[SAMPLEAPP_MAX_CLUSTERS] =
+const cId_t SampleApp_ClusterList[AppClusterId_max] =
 {
-	SAMPLEAPP_PERIODIC_CLUSTERID,
-	SAMPLEAPP_FLASH_CLUSTERID,
-	SAMPLEAPP_P2P_CLUSTERID,
-	SAMPLEAPP_USER_DEFINED_CLUSTERID
+	AppClusterId_periodic,
+	AppClusterId_flash,
+	AppClusterId_p2p,
+	AppClusterId_userDefined
 };
 
 const SimpleDescriptionFormat_t SampleApp_SimpleDesc =
 {
-	SAMPLEAPP_ENDPOINT,              //  int Endpoint;
-	SAMPLEAPP_PROFID,                //  uint16 AppProfId[2];
-	SAMPLEAPP_DEVICEID,              //  uint16 AppDeviceId[2];
-	SAMPLEAPP_DEVICE_VERSION,        //  int   AppDevVer:4;
-	SAMPLEAPP_FLAGS,                 //  int   AppFlags:4;
-	SAMPLEAPP_MAX_CLUSTERS,          //  uint8  AppNumInClusters;
-	(cId_t *)SampleApp_ClusterList,  //  uint8 *pAppInClusterList;
-	SAMPLEAPP_MAX_CLUSTERS,          //  uint8  AppNumInClusters;
-	(cId_t *)SampleApp_ClusterList   //  uint8 *pAppInClusterList;
+	SAMPLEAPP_ENDPOINT,					// int Endpoint;
+	SAMPLEAPP_PROFID,					// uint16 AppProfId[2];
+	SAMPLEAPP_DEVICEID,					// uint16 AppDeviceId[2];
+	SAMPLEAPP_DEVICE_VERSION,			// int   AppDevVer:4;
+	SAMPLEAPP_FLAGS,					// int   AppFlags:4;
+	AppClusterId_max,					// uint8  AppNumInClusters;
+	(cId_t *)SampleApp_ClusterList,		// uint8 *pAppInClusterList;
+	AppClusterId_max,					// uint8  AppNumOutClusters;
+	(cId_t *)SampleApp_ClusterList		// uint8 *pAppOutClusterList;
 };
 
 // This is the Endpoint/Interface description.  It is defined here, but
@@ -364,7 +364,7 @@ void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 	if (keys & HAL_KEY_SW_6)
 	{
 #if defined(ZDO_COORDINATOR)				// 协调器响应 S1 按下的消息
-		SampleApp_SendPeriodicMessageWithClusterId(SAMPLEAPP_USER_DEFINED_CLUSTERID, "\0", 1);	// 以广播的形式发送数据
+		SampleApp_SendPeriodicMessageWithClusterId(AppClusterId_userDefined, "\0", 1);	// 以广播的形式发送数据
 #else										// 路由器 终端不响应 S1 按下的消息
 		;
 #endif
@@ -372,7 +372,7 @@ void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 	if (keys & HAL_KEY_SW_1)
 	{
 #if defined(ZDO_COORDINATOR)				// 协调器响应 S2 按下的消息
-		SampleApp_SendPeriodicMessageWithClusterId(SAMPLEAPP_USER_DEFINED_CLUSTERID, "1", 1);	// 以广播的形式发送数据
+		SampleApp_SendPeriodicMessageWithClusterId(AppClusterId_userDefined, "1", 1);	// 以广播的形式发送数据
 #else										// 路由器 终端不响应 S2 按下的消息
 		;
 #endif		
@@ -399,7 +399,7 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 {
 	switch (pkt->clusterId) //判断簇ID
 	{
-    case SAMPLEAPP_PERIODIC_CLUSTERID: //收到广播数据
+    case AppClusterId_periodic:					//收到广播数据
 		{
 			byte buf[3];
 			osal_memset(buf, 0 , 3);
@@ -416,14 +416,14 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 		}
 		break;
 		
-    case SAMPLEAPP_FLASH_CLUSTERID: //收到组播数据
+    case AppClusterId_flash:					//收到组播数据
 		{
 			uint16 flashTime = BUILD_UINT16(pkt->cmd.Data[1], pkt->cmd.Data[2]);
 			HalLedBlink(HAL_LED_4, 4, 50, (flashTime / 4));
 		}
 		break;
 		
-	case SAMPLEAPP_USER_DEFINED_CLUSTERID:
+	case AppClusterId_userDefined:
 		{
 #if defined(ZDO_COORDINATOR)				// 协调器响应
 			;
@@ -462,7 +462,7 @@ void SampleApp_SendPeriodicMessage(void)
 	// 调用AF_DataRequest将数据无线广播出去
 	if(AF_DataRequest(&SampleApp_Periodic_DstAddr,					// 发送目的地址＋端点地址和传送模式
                        &SampleApp_epDesc,							// 源(答复或确认)终端的描述（比如操作系统中任务ID等）源EP
-                       SAMPLEAPP_PERIODIC_CLUSTERID,				// 被Profile指定的有效的集群号
+                       AppClusterId_periodic,						// 被Profile指定的有效的集群号
                        2,											// 发送数据长度
                        SendData,									// 发送数据缓冲区
                        &SampleApp_TransID,							// 任务ID号
@@ -494,7 +494,7 @@ void SampleApp_SendFlashMessage( uint16 flashTime )
 	buffer[2] = HI_UINT16( flashTime );
 	
 	if (AF_DataRequest(&SampleApp_Flash_DstAddr, &SampleApp_epDesc,
-						SAMPLEAPP_FLASH_CLUSTERID, 3, buffer, &SampleApp_TransID,
+						AppClusterId_flash, 3, buffer, &SampleApp_TransID,
 						AF_DISCV_ROUTE, AF_DEFAULT_RADIUS ) == afStatus_SUCCESS)
 	{
 	}
