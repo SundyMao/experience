@@ -67,8 +67,8 @@ extern "C"
 #define HAL_KEY_STATE_SHIFT           0x01
 
 /* Switches (keys) */
-#define HAL_KEY_SW_1 0x01  // Button S2 if available
-#define HAL_KEY_SW_6 0x20  // Button S1 if available
+#define HAL_KEY_SW_1 0x01  // Button S1 if available
+#define HAL_KEY_SW_2 0x02  // Button S2 if available
 
 /**************************************************************************************************
  * TYPEDEFS

@@ -68,12 +68,12 @@ reception of the flash command.
 #include "OnBoard.h"
 
 /* HAL */
-#include "hal_lcd.h"
-#include "hal_led.h"
-#include "hal_key.h"
-#include "MT_UART.h"
-#include "MT_APP.h"
-#include "MT.h"
+#include "hal/include/hal_lcd.h"
+#include "hal/include/hal_led.h"
+#include "hal/include/hal_key.h"
+#include "mt/MT_UART.h"
+#include "mt/MT_APP.h"
+#include "mt/MT.h"
 
 /*********************************************************************
 * MACROS
@@ -178,14 +178,11 @@ void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, u
 *
 * @return  none
 */
-void SampleApp_Init( uint8 task_id )
+void SampleApp_Init(uint8 task_id)
 { 
 	SampleApp_TaskID = task_id;   //osal分配的任务ID随着用户添加任务的增多而改变
 	SampleApp_NwkState = DEV_INIT;//设备状态设定为ZDO层中定义的初始化状态
 	SampleApp_TransID = 0;        //消息发送ID（多消息时有顺序之分）
-	
-	P0SEL &= ~0x20;					// 设置 P0.5 口为普通 IO
-	P0DIR |= 0x20;					// 设置 P0.5 口为输出 
 	
 	// Device hardware initialization can be added here or in main() (Zmain.c).
 	// If the hardware is application specific - add it here.
@@ -196,7 +193,7 @@ void SampleApp_Init( uint8 task_id )
 	// We are looking at a jumper (defined in SampleAppHw.c) to be jumpered
 	// together - if they are - we will start up a coordinator. Otherwise,
 	// the device will start as a router.
-	if ( readCoordinatorJumper() )
+	if (readCoordinatorJumper())
 		zgDeviceLogicalType = ZG_DEVICETYPE_COORDINATOR;
 	else
 		zgDeviceLogicalType = ZG_DEVICETYPE_ROUTER;
@@ -267,10 +264,10 @@ uint16 SampleApp_ProcessEvent( uint8 task_id, uint16 events )
 	afIncomingMSGPacket_t *MSGpkt;
 	(void)task_id;  // Intentionally unreferenced parameter
 	
-	if ( events & SYS_EVENT_MSG ) //接收系统消息再进行判断
+	if (events & SYS_EVENT_MSG) //接收系统消息再进行判断
 	{
 		//接收属于本应用任务SampleApp的消息，以SampleApp_TaskID标记
-		MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( SampleApp_TaskID );
+		MSGpkt = (afIncomingMSGPacket_t*)osal_msg_receive(SampleApp_TaskID);
 		while (MSGpkt)
 		{
 			switch (MSGpkt->hdr.event)
@@ -361,7 +358,7 @@ void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 {
 	shift = shift;
 	
-	if (keys & HAL_KEY_SW_6)
+	if (keys & HAL_KEY_SW_1)
 	{
 #if defined(ZDO_COORDINATOR)				// 协调器响应 S1 按下的消息
 		SampleApp_SendPeriodicMessageWithClusterId(AppClusterId_userDefined, "\0", 1);	// 以广播的形式发送数据
@@ -369,7 +366,7 @@ void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 		;
 #endif
 	}
-	if (keys & HAL_KEY_SW_1)
+	if (keys & HAL_KEY_SW_2)
 	{
 #if defined(ZDO_COORDINATOR)				// 协调器响应 S2 按下的消息
 		SampleApp_SendPeriodicMessageWithClusterId(AppClusterId_userDefined, "1", 1);	// 以广播的形式发送数据

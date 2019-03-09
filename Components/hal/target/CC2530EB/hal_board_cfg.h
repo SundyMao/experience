@@ -134,25 +134,33 @@
  * ------------------------------------------------------------------------------------------------
  */
 
-#define ACTIVE_LOW        !
-#define ACTIVE_HIGH       !!    /* double negation forces result to be '1' */
+#define ACTIVE_LOW			!
+#define ACTIVE_HIGH			!!    /* double negation forces result to be '1' */
 
 /* S1 */
-#define PUSH1_BV          BV(1)
-#define PUSH1_SBIT        P0_1
+#define PUSH1_BV			BV(1)
+#define PUSH1_SBIT			P0_1
 
 #if defined (HAL_BOARD_CC2530EB_REV17)
-  #define PUSH1_POLARITY    ACTIVE_HIGH
+  #define PUSH1_POLARITY	ACTIVE_HIGH
 #elif defined (HAL_BOARD_CC2530EB_REV13)
-  #define PUSH1_POLARITY    ACTIVE_LOW
+  #define PUSH1_POLARITY	ACTIVE_LOW
 #else
   #error Unknown Board Indentifier
 #endif
 
-/* Joystick Center Press */
-#define PUSH2_BV          BV(0)
-#define PUSH2_SBIT        P2_0
-#define PUSH2_POLARITY    ACTIVE_HIGH
+/* S2 */
+#define PUSH2_BV			BV(0)
+#define PUSH2_SBIT			P2_0
+
+#if defined (HAL_BOARD_CC2530EB_REV17)
+  #define PUSH2_POLARITY	ACTIVE_HIGH
+#elif defined (HAL_BOARD_CC2530EB_REV13)
+  #define PUSH2_POLARITY	ACTIVE_LOW
+#else
+  #error Unknown Board Indentifier
+#endif
+
 
 /* ------------------------------------------------------------------------------------------------
  *                         OSAL NV implemented by internal flash pages.

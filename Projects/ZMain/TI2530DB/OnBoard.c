@@ -123,20 +123,20 @@ static void ChkReset( void );
  */
 void InitBoard( uint8 level )
 {
-  if ( level == OB_COLD )
-  {
-    // IAR does not zero-out this byte below the XSTACK.
-    *(uint8 *)0x0 = 0;
-    // Interrupts off
-    osal_int_disable( INTS_ALL );
-    // Check for Brown-Out reset
-    ChkReset();
-  }
-  else  // !OB_COLD
-  {
-    /* Initialize Key stuff */
-    HalKeyConfig(HAL_KEY_INTERRUPT_DISABLE, OnBoard_KeyCallback);
-  }
+	if (level == OB_COLD)
+	{
+		// IAR does not zero-out this byte below the XSTACK.
+		*(uint8 *)0x0 = 0;
+		// Interrupts off
+		osal_int_disable( INTS_ALL );
+		// Check for Brown-Out reset
+		ChkReset();
+	}
+	else  // !OB_COLD
+	{
+		/* Initialize Key stuff */
+		HalKeyConfig(HAL_KEY_INTERRUPT_DISABLE, OnBoard_KeyCallback);
+	}
 }
 
 /*********************************************************************
@@ -244,7 +244,7 @@ void OnBoard_KeyCallback (uint8 keys, uint8 state)
   uint8 shift;
   (void)state;
 
-  shift = (keys & HAL_KEY_SW_6) ? true : false;
+  shift = (keys & HAL_KEY_SW_2) ? true : false;
 
   if (OnBoard_SendKeys(keys, shift) != ZSuccess)
   {
@@ -253,7 +253,7 @@ void OnBoard_KeyCallback (uint8 keys, uint8 state)
     {
     }
     // Process SW6 here
-    if (keys & HAL_KEY_SW_6)  // Switch 6
+    if (keys & HAL_KEY_SW_2)  // Switch 6
     {
     }
   }
