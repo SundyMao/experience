@@ -259,7 +259,7 @@ void SampleApp_Init(uint8 task_id)
 * @return  none
 */
 //用户应用任务的事件处理函数
-uint16 SampleApp_ProcessEvent( uint8 task_id, uint16 events )
+uint16 SampleApp_ProcessEvent(uint8 task_id, uint16 events)
 {
 	afIncomingMSGPacket_t *MSGpkt;
 	(void)task_id;  // Intentionally unreferenced parameter
@@ -357,7 +357,7 @@ uint16 SampleApp_ProcessEvent( uint8 task_id, uint16 events )
 void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 {
 	shift = shift;
-	
+
 	if (keys & HAL_KEY_SW_1)
 	{
 #if defined(ZDO_COORDINATOR)				// 协调器响应 S1 按下的消息
@@ -396,7 +396,7 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 {
 	switch (pkt->clusterId) //判断簇ID
 	{
-    case AppClusterId_periodic:					//收到广播数据
+	case AppClusterId_periodic:					//收到广播数据
 		{
 			byte buf[3];
 			osal_memset(buf, 0 , 3);
@@ -413,7 +413,7 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 		}
 		break;
 		
-    case AppClusterId_flash:					//收到组播数据
+	case AppClusterId_flash:					//收到组播数据
 		{
 			uint16 flashTime = BUILD_UINT16(pkt->cmd.Data[1], pkt->cmd.Data[2]);
 			HalLedBlink(HAL_LED_4, 4, 50, (flashTime / 4));
