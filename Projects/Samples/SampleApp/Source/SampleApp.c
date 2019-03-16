@@ -68,12 +68,12 @@ reception of the flash command.
 #include "OnBoard.h"
 
 /* HAL */
-#include "hal_lcd.h"
-#include "hal_led.h"
-#include "hal_key.h"
-#include "MT_UART.h"
-#include "MT_APP.h"
-#include "MT.h"
+#include "hal/include/hal_lcd.h"
+#include "hal/include/hal_led.h"
+#include "hal/include/hal_key.h"
+#include "mt/MT_UART.h"
+#include "mt/MT_APP.h"
+#include "mt/MT.h"
 
 /*********************************************************************
 * MACROS
@@ -106,11 +106,11 @@ const SimpleDescriptionFormat_t SampleApp_SimpleDesc =
 	SAMPLEAPP_ENDPOINT,					// int Endpoint;
 	SAMPLEAPP_PROFID,					// uint16 AppProfId[2];
 	SAMPLEAPP_DEVICEID,					// uint16 AppDeviceId[2];
-	SAMPLEAPP_DEVICE_VERSION,			// int   AppDevVer:4;
-	SAMPLEAPP_FLAGS,					// int   AppFlags:4;
-	AppClusterId_max,					// uint8  AppNumInClusters;
+	SAMPLEAPP_DEVICE_VERSION,			// int AppDevVer:4;
+	SAMPLEAPP_FLAGS,					// int AppFlags:4;
+	AppClusterId_max,					// uint8 AppNumInClusters;
 	(cId_t *)SampleApp_ClusterList,		// uint8 *pAppInClusterList;
-	AppClusterId_max,					// uint8  AppNumOutClusters;
+	AppClusterId_max,					// uint8 AppNumOutClusters;
 	(cId_t *)SampleApp_ClusterList		// uint8 *pAppOutClusterList;
 };
 
@@ -178,14 +178,11 @@ void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, u
 *
 * @return  none
 */
-void SampleApp_Init( uint8 task_id )
+void SampleApp_Init(uint8 task_id)
 { 
 	SampleApp_TaskID = task_id;   //osal分配的任务ID随着用户添加任务的增多而改变
 	SampleApp_NwkState = DEV_INIT;//设备状态设定为ZDO层中定义的初始化状态
 	SampleApp_TransID = 0;        //消息发送ID（多消息时有顺序之分）
-	
-	P0SEL &= ~0x20;					// 设置 P0.5 口为普通 IO
-	P0DIR |= 0x20;					// 设置 P0.5 口为输出 
 	
 	// Device hardware initialization can be added here or in main() (Zmain.c).
 	// If the hardware is application specific - add it here.
@@ -196,7 +193,7 @@ void SampleApp_Init( uint8 task_id )
 	// We are looking at a jumper (defined in SampleAppHw.c) to be jumpered
 	// together - if they are - we will start up a coordinator. Otherwise,
 	// the device will start as a router.
-	if ( readCoordinatorJumper() )
+	if (readCoordinatorJumper())
 		zgDeviceLogicalType = ZG_DEVICETYPE_COORDINATOR;
 	else
 		zgDeviceLogicalType = ZG_DEVICETYPE_ROUTER;
@@ -262,27 +259,27 @@ void SampleApp_Init( uint8 task_id )
 * @return  none
 */
 //用户应用任务的事件处理函数
-uint16 SampleApp_ProcessEvent( uint8 task_id, uint16 events )
+uint16 SampleApp_ProcessEvent(uint8 task_id, uint16 events)
 {
 	afIncomingMSGPacket_t *MSGpkt;
 	(void)task_id;  // Intentionally unreferenced parameter
 	
-	if ( events & SYS_EVENT_MSG ) //接收系统消息再进行判断
+	if (events & SYS_EVENT_MSG) //接收系统消息再进行判断
 	{
 		//接收属于本应用任务SampleApp的消息，以SampleApp_TaskID标记
-		MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( SampleApp_TaskID );
-		while ( MSGpkt )
+		MSGpkt = (afIncomingMSGPacket_t*)osal_msg_receive(SampleApp_TaskID);
+		while (MSGpkt)
 		{
-			switch ( MSGpkt->hdr.event )
+			switch (MSGpkt->hdr.event)
 			{
 				// Received when a key is pressed
-			case KEY_CHANGE://按键事件
-				SampleApp_HandleKeys( ((keyChange_t *)MSGpkt)->state, ((keyChange_t *)MSGpkt)->keys );
+			case KEY_CHANGE:						//按键事件
+				SampleApp_HandleKeys(((keyChange_t *)MSGpkt)->state, ((keyChange_t *)MSGpkt)->keys);
 				break;
 				
 				// Received when a messages is received (OTA) for this endpoint
-			case AF_INCOMING_MSG_CMD://接收数据事件,调用函数AF_DataRequest()接收数据
-				SampleApp_MessageMSGCB( MSGpkt );//调用回调函数对收到的数据进行处理
+			case AF_INCOMING_MSG_CMD:				//接收数据事件,调用函数AF_DataRequest()接收数据
+				SampleApp_MessageMSGCB(MSGpkt);		//调用回调函数对收到的数据进行处理
 				break;
 				
 				// Received whenever the device changes state in the network
@@ -331,8 +328,8 @@ uint16 SampleApp_ProcessEvent( uint8 task_id, uint16 events )
 		SampleApp_SendPeriodicMessage();
 		
 		// Setup to send message again in normal period (+ a little jitter)
-		osal_start_timerEx( SampleApp_TaskID, SAMPLEAPP_SEND_PERIODIC_MSG_EVT,
-						   (SAMPLEAPP_SEND_PERIODIC_MSG_TIMEOUT + (osal_rand() & 0x00FF)) );
+		osal_start_timerEx(SampleApp_TaskID, SAMPLEAPP_SEND_PERIODIC_MSG_EVT,
+						   (SAMPLEAPP_SEND_PERIODIC_MSG_TIMEOUT + (osal_rand() & 0x00FF)));
 		
 		// return unprocessed events 返回未处理的事件
 		return (events ^ SAMPLEAPP_SEND_PERIODIC_MSG_EVT);
@@ -360,8 +357,8 @@ uint16 SampleApp_ProcessEvent( uint8 task_id, uint16 events )
 void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 {
 	shift = shift;
-	
-	if (keys & HAL_KEY_SW_6)
+
+	if (keys & HAL_KEY_SW_1)
 	{
 #if defined(ZDO_COORDINATOR)				// 协调器响应 S1 按下的消息
 		SampleApp_SendPeriodicMessageWithClusterId(AppClusterId_userDefined, "\0", 1);	// 以广播的形式发送数据
@@ -369,7 +366,7 @@ void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 		;
 #endif
 	}
-	if (keys & HAL_KEY_SW_1)
+	if (keys & HAL_KEY_SW_2)
 	{
 #if defined(ZDO_COORDINATOR)				// 协调器响应 S2 按下的消息
 		SampleApp_SendPeriodicMessageWithClusterId(AppClusterId_userDefined, "1", 1);	// 以广播的形式发送数据
@@ -399,13 +396,13 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 {
 	switch (pkt->clusterId) //判断簇ID
 	{
-    case AppClusterId_periodic:					//收到广播数据
+	case AppClusterId_periodic:					//收到广播数据
 		{
 			byte buf[3];
 			osal_memset(buf, 0 , 3);
 			osal_memcpy(buf, pkt->cmd.Data, 2); //复制数据到缓冲区中
 			
-			if(buf[0]=='D' && buf[1]=='1')      //判断收到的数据是否为"D1"
+			if(buf[0]=='D' && buf[1]=='1')				//判断收到的数据是否为"D1"
 			{
 				HalLedBlink(HAL_LED_1, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
 			}
@@ -416,7 +413,7 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 		}
 		break;
 		
-    case AppClusterId_flash:					//收到组播数据
+	case AppClusterId_flash:					//收到组播数据
 		{
 			uint16 flashTime = BUILD_UINT16(pkt->cmd.Data[1], pkt->cmd.Data[2]);
 			HalLedBlink(HAL_LED_4, 4, 50, (flashTime / 4));
