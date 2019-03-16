@@ -282,7 +282,7 @@ void HalKeyConfig(bool interruptEnable, halKeyCBack_t cback)
  *
  * @return  keys - current keys status
  **************************************************************************************************/
-uint8 HalKeyRead (void)
+uint8 HalKeyRead(void)
 {
 	uint8 keys = 0;
 	if (HAL_PUSH_BUTTON1())
@@ -307,7 +307,7 @@ uint8 HalKeyRead (void)
  *
  * @return  None
  **************************************************************************************************/
-void HalKeyPoll (void)
+void HalKeyPoll(void)
 {
 	uint8 keys = 0;
 
@@ -316,7 +316,7 @@ void HalKeyPoll (void)
 		keys |= HAL_KEY_SW_1;
 	}
 	
-	if (!HAL_PUSH_BUTTON2())		//S1
+	if (!HAL_PUSH_BUTTON2())		//S2
 	{
 		keys |= HAL_KEY_SW_2;
 	}	

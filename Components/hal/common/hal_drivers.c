@@ -189,35 +189,32 @@ void HalDriverInit (void)
  *
  * @return  None
  **************************************************************************************************/
-uint16 Hal_ProcessEvent( uint8 task_id, uint16 events )
+uint16 Hal_ProcessEvent(uint8 task_id, uint16 events)
 {
-  uint8 *msgPtr;
-  
-  (void)task_id;  // Intentionally unreferenced parameter
-
-  if ( events & SYS_EVENT_MSG )
-  {
-    msgPtr = osal_msg_receive(Hal_TaskID);
-
-    while (msgPtr)
-    {
-      /* Do something here - for now, just deallocate the msg and move on */
-
-      /* De-allocate */
-      osal_msg_deallocate( msgPtr );
-      /* Next */
-      msgPtr = osal_msg_receive( Hal_TaskID );
-    }
-    return events ^ SYS_EVENT_MSG;
-  }
-
-  if ( events & HAL_LED_BLINK_EVENT )
-  {
+	(void)task_id;  // Intentionally unreferenced parameter
+	
+	if (events & SYS_EVENT_MSG)
+	{
+		uint8 *msgPtr = osal_msg_receive(Hal_TaskID);
+		while (msgPtr)
+		{
+			/* Do something here - for now, just deallocate the msg and move on */
+			
+			/* De-allocate */
+			osal_msg_deallocate( msgPtr );
+			/* Next */
+			msgPtr = osal_msg_receive( Hal_TaskID );
+		}
+		return events ^ SYS_EVENT_MSG;
+	}
+	
+	if (events & HAL_LED_BLINK_EVENT)
+	{
 #if (defined (BLINK_LEDS)) && (HAL_LED == TRUE)
-    HalLedUpdate();
+		HalLedUpdate();
 #endif /* BLINK_LEDS && HAL_LED */
-    return events ^ HAL_LED_BLINK_EVENT;
-  }
+		return events ^ HAL_LED_BLINK_EVENT;
+	}
 
   if (events & HAL_KEY_EVENT)
   {
@@ -296,7 +293,5 @@ void Hal_ProcessPoll ()
 
 }
 
-
 /**************************************************************************************************
 **************************************************************************************************/
-

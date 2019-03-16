@@ -22,7 +22,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+  PROVIDED “AS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -310,23 +310,23 @@ uint8 osal_start_reload_timer( uint8 taskID, uint16 event_id, uint16 timeout_val
  *
  * @return  SUCCESS or INVALID_EVENT_ID
  */
-uint8 osal_stop_timerEx( uint8 task_id, uint16 event_id )
+uint8 osal_stop_timerEx(uint8 task_id, uint16 event_id)
 {
-  halIntState_t intState;
-  osalTimerRec_t *foundTimer;
+	halIntState_t intState;
+	osalTimerRec_t *foundTimer;
+	
+	HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
 
-  HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
+	// Find the timer to stop
+	foundTimer = osalFindTimer(task_id, event_id);
+	if ( foundTimer )
+	{
+		osalDeleteTimer(foundTimer);
+	}
 
-  // Find the timer to stop
-  foundTimer = osalFindTimer( task_id, event_id );
-  if ( foundTimer )
-  {
-    osalDeleteTimer( foundTimer );
-  }
+	HAL_EXIT_CRITICAL_SECTION( intState );   // Re-enable interrupts.
 
-  HAL_EXIT_CRITICAL_SECTION( intState );   // Re-enable interrupts.
-
-  return ( (foundTimer != NULL) ? SUCCESS : INVALID_EVENT_ID );
+	return ((foundTimer != NULL) ? SUCCESS : INVALID_EVENT_ID);
 }
 
 /*********************************************************************

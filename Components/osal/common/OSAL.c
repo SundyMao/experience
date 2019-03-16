@@ -24,7 +24,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+  PROVIDED “AS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -843,20 +843,20 @@ uint8 osal_msg_enqueue_max( osal_msg_q_t *q_ptr, void *msg_ptr, uint8 max )
  *
  * @return  SUCCESS, INVALID_TASK
  */
-uint8 osal_set_event( uint8 task_id, uint16 event_flag )
+uint8 osal_set_event(uint8 task_id, uint16 event_flag)
 {
-  if ( task_id < tasksCnt )
-  {
-    halIntState_t   intState;
-    HAL_ENTER_CRITICAL_SECTION(intState);    // Hold off interrupts
-    tasksEvents[task_id] |= event_flag;  // Stuff the event bit(s)
-    HAL_EXIT_CRITICAL_SECTION(intState);     // Release interrupts
-    return ( SUCCESS );
-  }
-   else
-  {
-    return ( INVALID_TASK );
-  }
+	if ( task_id < tasksCnt )
+	{
+		halIntState_t intState;
+		HAL_ENTER_CRITICAL_SECTION(intState);	// Hold off interrupts
+		tasksEvents[task_id] |= event_flag;		// Stuff the event bit(s)
+		HAL_EXIT_CRITICAL_SECTION(intState);	// Release interrupts
+		return (SUCCESS);
+	}
+	else
+	{
+		return (INVALID_TASK);
+	}
 }
 
 /*********************************************************************
