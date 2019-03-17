@@ -3208,6 +3208,9 @@
       <file>
         <name>$PROJ_DIR$\..\..\..\Components\hal\common\hal_drivers.c</name>
       </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Components\hal\common\hal_motor.c</name>
+      </file>
     </group>
     <group>
       <name>Include</name>
@@ -3240,6 +3243,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Components\hal\include\hal_led.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Components\hal\include\hal_motor.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Components\hal\include\hal_sleep.h</name>

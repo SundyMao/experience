@@ -59,12 +59,13 @@ extern "C"
 /**************************************************************************************************
  * CONSTANTS
  **************************************************************************************************/
-#define HAL_KEY_EVENT         0x0001
-#define HAL_LED_BLINK_EVENT   0x0002
-#define HAL_SLEEP_TIMER_EVENT 0x0004
-#define PERIOD_RSSI_RESET_EVT 0x0008
+#define HAL_KEY_EVENT				0x0001
+#define HAL_LED_BLINK_EVENT			0x0002
+#define HAL_SLEEP_TIMER_EVENT		0x0004
+#define PERIOD_RSSI_RESET_EVT		0x0008
+#define HAL_MOTOR_EVENT				0x0010		// stepper motor
 
-#define PERIOD_RSSI_RESET_TIMEOUT           10
+#define PERIOD_RSSI_RESET_TIMEOUT	10
 
 /**************************************************************************************************
  * TYPEDEFS

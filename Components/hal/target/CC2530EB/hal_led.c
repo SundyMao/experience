@@ -98,7 +98,7 @@ static uint8 preBlinkState;            // Original State before going to blink m
  ***************************************************************************************************/
 #if (HAL_LED == TRUE)
 void HalLedUpdate (void);
-void HalLedOnOff (uint8 leds, uint8 mode);
+void HalLedOnOff(uint8 leds, uint8 mode);
 #endif /* HAL_LED */
 
 /***************************************************************************************************
@@ -226,19 +226,17 @@ void HalLedBlink(uint8 leds, uint8 numBlinks, uint8 percent, uint16 period)
 				{
 					/* Store the current state of the led before going to blinking if not already blinking */
 					if(sts->mode < HAL_LED_MODE_BLINK )
-					{
 						preBlinkState |= (led & HalLedState);
-					}
-					sts->mode = HAL_LED_MODE_OFF;                    /* Stop previous blink */
-					sts->time = period;                              /* Time for one on/off cycle */
-					sts->onPct = percent;                            /* % of cycle LED is on */
-					sts->todo = numBlinks;                           /* Number of blink cycles */
+
+					sts->mode = HAL_LED_MODE_OFF;					/* Stop previous blink */
+					sts->time = period;								/* Time for one on/off cycle */
+					sts->onPct = percent;							/* % of cycle LED is on */
+					sts->todo = numBlinks;							/* Number of blink cycles */
 					if (!numBlinks)
-					{
-						sts->mode |= HAL_LED_MODE_FLASH;  /* Continuous */
-					}
-					sts->next = osal_GetSystemClock();                /* Start now */
-					sts->mode |= HAL_LED_MODE_BLINK;                  /* Enable blinking */
+						sts->mode |= HAL_LED_MODE_FLASH;			/* Continuous */
+
+					sts->next = osal_GetSystemClock();				/* Start now */
+					sts->mode |= HAL_LED_MODE_BLINK;				/* Enable blinking */
 					leds ^= led;
 				}
 				led <<= 1;
@@ -250,12 +248,12 @@ void HalLedBlink(uint8 leds, uint8 numBlinks, uint8 percent, uint16 period)
 		}
 		else
 		{
-			HalLedSet(leds, HAL_LED_MODE_ON);                    /* >= 100%, turn on */
+			HalLedSet(leds, HAL_LED_MODE_ON);						/* >= 100%, turn on */
 		}
 	}
 	else
 	{
-		HalLedSet(leds, HAL_LED_MODE_OFF);                     /* No on time, turn off */
+		HalLedSet(leds, HAL_LED_MODE_OFF);							/* No on time, turn off */
 	}
 #elif (HAL_LED == TRUE)
 	percent = (leds & HalLedState) ? HAL_LED_MODE_OFF : HAL_LED_MODE_ON;
@@ -279,7 +277,7 @@ void HalLedBlink(uint8 leds, uint8 numBlinks, uint8 percent, uint16 period)
  *
  * @return  none
  ***************************************************************************************************/
-void HalLedUpdate (void)
+void HalLedUpdate(void)
 {
 	uint8 led;
 	uint8 pct;
@@ -308,24 +306,22 @@ void HalLedUpdate (void)
 					{
 						if (sts->mode & HAL_LED_MODE_ON)
 						{
-							pct = 100 - sts->onPct;               /* Percentage of cycle for off */
-							sts->mode &= ~HAL_LED_MODE_ON;        /* Say it's not on */
-							HalLedOnOff (led, HAL_LED_MODE_OFF);  /* Turn it off */
-							
+							pct = 100 - sts->onPct;						/* Percentage of cycle for off */
+							sts->mode &= ~HAL_LED_MODE_ON;				/* Say it's not on */
+							HalLedOnOff(led, HAL_LED_MODE_OFF);			/* Turn it off */
+
 							if (!(sts->mode & HAL_LED_MODE_FLASH))
-							{
-								sts->todo--;                        /* Not continuous, reduce count */
-							}
+								sts->todo--;							/* Not continuous, reduce count */
 						}
 						else if ((!sts->todo) && !(sts->mode & HAL_LED_MODE_FLASH))
 						{
-							sts->mode ^= HAL_LED_MODE_BLINK;      /* No more blinks */
+							sts->mode ^= HAL_LED_MODE_BLINK;			/* No more blinks */
 						}
 						else
 						{
-							pct = sts->onPct;                     /* Percentage of cycle for on */
-							sts->mode |= HAL_LED_MODE_ON;         /* Say it's on */
-							HalLedOnOff (led, HAL_LED_MODE_ON);   /* Turn it on */
+							pct = sts->onPct;							/* Percentage of cycle for on */
+							sts->mode |= HAL_LED_MODE_ON;				/* Say it's on */
+							HalLedOnOff(led, HAL_LED_MODE_ON);			/* Turn it on */
 						}
 
 						if (sts->mode & HAL_LED_MODE_BLINK)
@@ -338,17 +334,17 @@ void HalLedUpdate (void)
 							/* no more blink, no more wait */
 							wait = 0;
 							/* After blinking, set the LED back to the state before it blinks */
-							HalLedSet (led, ((preBlinkState & led)!=0)?HAL_LED_MODE_ON:HAL_LED_MODE_OFF);
+							HalLedSet(led, ((preBlinkState & led) != 0) ? HAL_LED_MODE_ON : HAL_LED_MODE_OFF);
 							/* Clear the saved bit */
 							preBlinkState &= (led ^ 0xFF);
 						}
 					}
 					else
 					{
-						wait = sts->next - time;  /* Time left */
+						wait = sts->next - time;						/* Time left */
 					}
-					
-					if (!next || ( wait && (wait < next) ))
+
+					if (!next || (wait && (wait < next)))
 					{
 						next = wait;
 					}
@@ -361,7 +357,7 @@ void HalLedUpdate (void)
 		
 		if (next)
 		{
-			osal_start_timerEx(Hal_TaskID, HAL_LED_BLINK_EVENT, next);   /* Schedule event */
+			osal_start_timerEx(Hal_TaskID, HAL_LED_BLINK_EVENT, next);	/* Schedule event */
 		}
 	}
 }
@@ -378,63 +374,43 @@ void HalLedUpdate (void)
  ***************************************************************************************************/
 void HalLedOnOff (uint8 leds, uint8 mode)
 {
-  if (leds & HAL_LED_1)
-  {
-    if (mode == HAL_LED_MODE_ON)
-    {
-      HAL_TURN_ON_LED1();
-    }
-    else
-    {
-      HAL_TURN_OFF_LED1();
-    }
-  }
+	if (leds & HAL_LED_1)
+	{
+		if (mode == HAL_LED_MODE_ON)
+			HAL_TURN_ON_LED1();
+		else
+			HAL_TURN_OFF_LED1();
+	}
 
-  if (leds & HAL_LED_2)
-  {
-    if (mode == HAL_LED_MODE_ON)
-    {
-      HAL_TURN_ON_LED2();
-    }
-    else
-    {
-      HAL_TURN_OFF_LED2();
-    }
-  }
+	if (leds & HAL_LED_2)
+	{
+		if (mode == HAL_LED_MODE_ON)
+			HAL_TURN_ON_LED2();
+		else
+			HAL_TURN_OFF_LED2();
+	}
 
-  if (leds & HAL_LED_3)
-  {
-    if (mode == HAL_LED_MODE_ON)
-    {
-      HAL_TURN_ON_LED3();
-    }
-    else
-    {
-      HAL_TURN_OFF_LED3();
-    }
-  }
+	if (leds & HAL_LED_3)
+	{
+		if (mode == HAL_LED_MODE_ON)
+			HAL_TURN_ON_LED3();
+		else
+			HAL_TURN_OFF_LED3();
+	}
 
-  if (leds & HAL_LED_4)
-  {
-    if (mode == HAL_LED_MODE_ON)
-    {
-      HAL_TURN_ON_LED4();
-    }
-    else
-    {
-      HAL_TURN_OFF_LED4();
-    }
-  }
+	if (leds & HAL_LED_4)
+	{
+		if (mode == HAL_LED_MODE_ON)
+			HAL_TURN_ON_LED4();
+		else
+			HAL_TURN_OFF_LED4();
+	}
 
-  /* Remember current state */
-  if (mode)
-  {
-    HalLedState |= leds;
-  }
-  else
-  {
-    HalLedState &= (leds ^ 0xFF);
-  }
+	/* Remember current state */
+	if (mode)
+		HalLedState |= leds;
+	else
+		HalLedState &= (leds ^ 0xFF);
 }
 #endif /* HAL_LED */
 
