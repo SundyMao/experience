@@ -1020,11 +1020,11 @@ uint8 osal_init_system( void )
 void osal_start_system( void )
 {
 #if !defined ( ZBIT ) && !defined ( UBIT )
-  for(;;)  // Forever Loop
+	for(;;)  // Forever Loop
 #endif
-  {
-    osal_run_system();
-  }
+	{
+		osal_run_system();
+	}
 }
 
 /*********************************************************************
@@ -1043,48 +1043,48 @@ void osal_start_system( void )
  */
 void osal_run_system( void )
 {
-  uint8 idx = 0;
+	uint8 idx = 0;
 
-  osalTimeUpdate();
-  Hal_ProcessPoll();
+	osalTimeUpdate();
+	Hal_ProcessPoll();
 
-  do {
-    if (tasksEvents[idx])  // Task is highest priority that is ready.
-    {
-      break;
-    }
-  } while (++idx < tasksCnt);
+	do {
+		if (tasksEvents[idx])  // Task is highest priority that is ready.
+		{
+			break;
+		}
+	} while (++idx < tasksCnt);
 
-  if (idx < tasksCnt)
-  {
-    uint16 events;
-    halIntState_t intState;
+	if (idx < tasksCnt)
+	{
+		uint16 events;
+		halIntState_t intState;
 
-    HAL_ENTER_CRITICAL_SECTION(intState);
-    events = tasksEvents[idx];
-    tasksEvents[idx] = 0;  // Clear the Events for this task.
-    HAL_EXIT_CRITICAL_SECTION(intState);
+		HAL_ENTER_CRITICAL_SECTION(intState);
+		events = tasksEvents[idx];
+		tasksEvents[idx] = 0;  // Clear the Events for this task.
+		HAL_EXIT_CRITICAL_SECTION(intState);
 
-    activeTaskID = idx;
-    events = (tasksArr[idx])( idx, events );
-    activeTaskID = TASK_NO_TASK;
+		activeTaskID = idx;
+		events = (tasksArr[idx])( idx, events );
+		activeTaskID = TASK_NO_TASK;
 
-    HAL_ENTER_CRITICAL_SECTION(intState);
-    tasksEvents[idx] |= events;  // Add back unprocessed events to the current task.
-    HAL_EXIT_CRITICAL_SECTION(intState);
-  }
+		HAL_ENTER_CRITICAL_SECTION(intState);
+		tasksEvents[idx] |= events;  // Add back unprocessed events to the current task.
+		HAL_EXIT_CRITICAL_SECTION(intState);
+	}
 #if defined( POWER_SAVING )
-  else  // Complete pass through all task events with no activity?
-  {
-    osal_pwrmgr_powerconserve();  // Put the processor/system into sleep
-  }
+	else  // Complete pass through all task events with no activity?
+	{
+		osal_pwrmgr_powerconserve();  // Put the processor/system into sleep
+	}
 #endif
 
-  /* Yield in case cooperative scheduling is being used. */
+	/* Yield in case cooperative scheduling is being used. */
 #if defined (configUSE_PREEMPTION) && (configUSE_PREEMPTION == 0)
-  {
-    osal_task_yield();
-  }
+	{
+		osal_task_yield();
+	}
 #endif
 }
 

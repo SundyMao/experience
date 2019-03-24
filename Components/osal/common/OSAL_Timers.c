@@ -251,11 +251,11 @@ uint8 osal_start_timerEx(uint8 taskID, uint16 event_id, uint16 timeout_value)
 	halIntState_t intState;
 	osalTimerRec_t *newTimer;
 	
-	HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
+	HAL_ENTER_CRITICAL_SECTION(intState);  // Hold off interrupts.
 	// Add timer
 	newTimer = osalAddTimer(taskID, event_id, timeout_value);
 
-	HAL_EXIT_CRITICAL_SECTION( intState );   // Re-enable interrupts.
+	HAL_EXIT_CRITICAL_SECTION(intState);   // Re-enable interrupts.
 	
 	return ((newTimer != NULL) ? SUCCESS : NO_TIMER_AVAIL);
 }

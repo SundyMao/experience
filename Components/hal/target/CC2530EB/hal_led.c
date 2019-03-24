@@ -75,7 +75,6 @@ typedef struct
 	uint8           sleepActive;
 } HalLedStatus_t;
 
-
 /***************************************************************************************************
  *                                           GLOBAL VARIABLES
  ***************************************************************************************************/
@@ -97,7 +96,7 @@ static uint8 preBlinkState;            // Original State before going to blink m
  *                                            LOCAL FUNCTION
  ***************************************************************************************************/
 #if (HAL_LED == TRUE)
-void HalLedUpdate (void);
+void HalLedUpdate(void);
 void HalLedOnOff(uint8 leds, uint8 mode);
 #endif /* HAL_LED */
 
@@ -279,18 +278,14 @@ void HalLedBlink(uint8 leds, uint8 numBlinks, uint8 percent, uint16 period)
  ***************************************************************************************************/
 void HalLedUpdate(void)
 {
-	uint8 led;
 	uint8 pct;
-	uint8 leds;
-	HalLedControl_t *sts;
 	uint32 time;
-	uint16 next;
 	uint16 wait;
 
-	next = 0;
-	led  = HAL_LED_1;
-	leds = HAL_LED_ALL;
-	sts = HalLedStatusControl.HalLedControlTable;
+	uint16 next = 0;
+	uint8 led  = HAL_LED_1;
+	uint8 leds = HAL_LED_ALL;
+	HalLedControl_t* sts = HalLedStatusControl.HalLedControlTable;
 
 	/* Check if sleep is active or not */
 	if (!HalLedStatusControl.sleepActive)

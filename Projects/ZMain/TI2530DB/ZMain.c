@@ -80,68 +80,68 @@ extern uint8 AppTitle[]; //应用程序名称
  */
 int main( void )
 {
-  // Turn off interrupts
-  osal_int_disable( INTS_ALL );
+	// Turn off interrupts
+	osal_int_disable( INTS_ALL );
 
-  // Initialization for board related stuff such as LEDs
-  HAL_BOARD_INIT();
+	// Initialization for board related stuff such as LEDs
+	HAL_BOARD_INIT();
 
-  // Make sure supply voltage is high enough to run
-  zmain_vdd_check();
+	// Make sure supply voltage is high enough to run
+	zmain_vdd_check();
 
-  // Initialize board I/O
-  InitBoard( OB_COLD );
+	// Initialize board I/O
+	InitBoard( OB_COLD );
 
-  // Initialze HAL drivers
-  HalDriverInit();
+	// Initialze HAL drivers
+	HalDriverInit();
 
-  // Initialize NV System
-  osal_nv_init( NULL );
+	// Initialize NV System
+	osal_nv_init( NULL );
 
-  // Initialize the MAC
-  ZMacInit();
+	// Initialize the MAC
+	ZMacInit();
 
-  // Determine the extended address
-  zmain_ext_addr();
+	// Determine the extended address
+	zmain_ext_addr();
 
 #if defined ZCL_KEY_ESTABLISH
-  // Initialize the Certicom certificate information.
-  zmain_cert_init();
+	// Initialize the Certicom certificate information.
+	zmain_cert_init();
 #endif
 
-  // Initialize basic NV items
-  zgInit();
+	// Initialize basic NV items
+	zgInit();
 
 #ifndef NONWK
-  // Since the AF isn't a task, call it's initialization routine
-  afInit();
+	// Since the AF isn't a task, call it's initialization routine
+	afInit();
 #endif
 
-  // Initialize the operating system
-  osal_init_system();
+	// Initialize the operating system
+	osal_init_system();
 
-  // Allow interrupts
-  osal_int_enable( INTS_ALL );
+	// Allow interrupts
+	osal_int_enable( INTS_ALL );
 
-  // Final board initialization
-  InitBoard( OB_READY );
+	// Final board initialization
+	InitBoard( OB_READY );
 
-  // Display information about this device
-  zmain_dev_info();
+	// Display information about this device
+	zmain_dev_info();
 
-  /* Display the device info on the LCD */
+	/* Display the device info on the LCD */
 #ifdef LCD_SUPPORTED
-  zmain_lcd_init();
+	zmain_lcd_init();
 #endif
 
 #ifdef WDT_IN_PM1
-  /* If WDT is used, this is a good place to enable it. */
-  WatchDogEnable( WDTIMX );
+	/* If WDT is used, this is a good place to enable it. */
+	WatchDogEnable( WDTIMX );
 #endif
 
-  osal_start_system(); // No Return from here
+	osal_start_system(); // No Return from here
 
-  return 0;  // Shouldn't get here.
+	return 0;  // Shouldn't get here.
 } // main()
 
 /*********************************************************************
@@ -192,7 +192,7 @@ static void zmain_ext_addr(void)
     if (osal_memcmp(aExtendedAddress, nullAddr, Z_EXTADDR_LEN))
     {
       // Attempt to read the extended address from the designated location in the Info Page.
-      if (!osal_memcmp((uint8 *)(P_INFOPAGE+HAL_INFOP_IEEE_OSET), nullAddr, Z_EXTADDR_LEN))
+      if (!osal_memcmp((uint8 *)(P_INFOPAGE + HAL_INFOP_IEEE_OSET), nullAddr, Z_EXTADDR_LEN))
       {
         osal_memcpy(aExtendedAddress, (uint8 *)(P_INFOPAGE+HAL_INFOP_IEEE_OSET), Z_EXTADDR_LEN);
       }

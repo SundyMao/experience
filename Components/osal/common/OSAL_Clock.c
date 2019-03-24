@@ -21,7 +21,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+  PROVIDED “AS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -150,40 +150,40 @@ static void osalClockUpdate( uint16 elapsedMSec );
  *
  * @return  None.
  */
-void osalTimeUpdate( void )
+void osalTimeUpdate(void)
 {
-  halIntState_t intState;
-  uint32 tmp;
-  uint32 ticks320us;
-  uint16 elapsedMSec = 0;
+	halIntState_t intState;
+	uint32 tmp;
+	uint32 ticks320us;
+	uint16 elapsedMSec = 0;
 
-  HAL_ENTER_CRITICAL_SECTION(intState);
-  // Get the free-running count of 320us timer ticks
-  tmp = macMcuPrecisionCount();
-  HAL_EXIT_CRITICAL_SECTION(intState);
-  
-  if ( tmp != previousMacTimerTick )
-  {
-    // Calculate the elapsed ticks of the free-running timer.
-    ticks320us = (tmp - previousMacTimerTick) & 0xffffffffu;
+	HAL_ENTER_CRITICAL_SECTION(intState);
+	// Get the free-running count of 320us timer ticks
+	tmp = macMcuPrecisionCount();
+	HAL_EXIT_CRITICAL_SECTION(intState);
 
-    // Store the MAC Timer tick count for the next time through this function.
-    previousMacTimerTick = tmp;
-    
-    // update converted number with remaining ticks from loop and the
-    // accumulated remainder from loop
-    tmp = (ticks320us * 8) + remUsTicks;
+	if (tmp != previousMacTimerTick)
+	{
+		// Calculate the elapsed ticks of the free-running timer.
+		ticks320us = (tmp - previousMacTimerTick) & 0xffffffffu;
 
-    // Convert the 320 us ticks into milliseconds and a remainder
-    CONVERT_320US_TO_MS_ELAPSED_REMAINDER( tmp, elapsedMSec, remUsTicks );
+		// Store the MAC Timer tick count for the next time through this function.
+		previousMacTimerTick = tmp;
 
-    // Update OSAL Clock and Timers
-    if ( elapsedMSec )
-    {
-      osalClockUpdate( elapsedMSec );
-      osalTimerUpdate( elapsedMSec );
-    }
-  }
+		// update converted number with remaining ticks from loop and the
+		// accumulated remainder from loop
+		tmp = (ticks320us * 8) + remUsTicks;
+
+		// Convert the 320 us ticks into milliseconds and a remainder
+		CONVERT_320US_TO_MS_ELAPSED_REMAINDER(tmp, elapsedMSec, remUsTicks);
+
+		// Update OSAL Clock and Timers
+		if (elapsedMSec)
+		{
+			osalClockUpdate(elapsedMSec);
+			osalTimerUpdate(elapsedMSec);
+		}
+	}
 }
 
 /*********************************************************************
