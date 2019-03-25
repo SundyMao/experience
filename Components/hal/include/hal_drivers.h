@@ -84,22 +84,22 @@ extern uint8 Hal_TaskID;
 /**************************************************************************************************
  * Serial Port Initialization
  **************************************************************************************************/
-extern void Hal_Init ( uint8 task_id );
+extern void Hal_Init(uint8 task_id);
 
 /*
  * Process Serial Buffer
  */
-extern uint16 Hal_ProcessEvent ( uint8 task_id, uint16 events );
+extern uint16 Hal_ProcessEvent(uint8 task_id, uint16 events);
 
 /*
  * Process Polls
  */
-extern void Hal_ProcessPoll (void);
+extern void Hal_ProcessPoll(void);
 
 /*
  * Initialize HW
  */
-extern void HalDriverInit (void);
+extern void HalDriverInit(void);
 
 /**************************************************************************************************
 **************************************************************************************************/

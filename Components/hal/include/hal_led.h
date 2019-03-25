@@ -90,32 +90,32 @@ extern "C"
 /*
  * Initialize LED Service.
  */
-extern void HalLedInit( void );
+extern void HalLedInit(void);
 
 /*
  * Set the LED ON/OFF/TOGGLE.
  */
-extern uint8 HalLedSet( uint8 led, uint8 mode );
+extern uint8 HalLedSet(uint8 led, uint8 mode);
 
 /*
  * Blink the LED.
  */
-extern void HalLedBlink( uint8 leds, uint8 cnt, uint8 duty, uint16 time );
+extern void HalLedBlink(uint8 leds, uint8 cnt, uint8 duty, uint16 time);
 
 /*
  * Put LEDs in sleep state - store current values
  */
-extern void HalLedEnterSleep( void );
+extern void HalLedEnterSleep(void);
 
 /*
  * Retore LEDs from sleep state
  */
-extern void HalLedExitSleep( void );
+extern void HalLedExitSleep(void);
 
 /*
  * Return LED state
  */
-extern uint8 HalLedGetState ( void );
+extern uint8 HalLedGetState(void);
 
 /*********************************************************************
 *********************************************************************/

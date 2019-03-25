@@ -72,7 +72,7 @@ typedef struct
 typedef struct
 {
 	HalLedControl_t HalLedControlTable[HAL_LED_DEFAULT_MAX_LEDS];
-	uint8           sleepActive;
+	uint8 sleepActive;
 } HalLedStatus_t;
 
 /***************************************************************************************************
@@ -116,12 +116,12 @@ void HalLedOnOff(uint8 leds, uint8 mode);
 void HalLedInit(void)
 {
 #if (HAL_LED == TRUE)
-  /* Initialize all LEDs to OFF */
-  HalLedSet (HAL_LED_ALL, HAL_LED_MODE_OFF);
+	/* Initialize all LEDs to OFF */
+	HalLedSet(HAL_LED_ALL, HAL_LED_MODE_OFF);
 #endif /* HAL_LED */
 #ifdef BLINK_LEDS
-  /* Initialize sleepActive to FALSE */
-  HalLedStatusControl.sleepActive = FALSE;
+	/* Initialize sleepActive to FALSE */
+	HalLedStatusControl.sleepActive = FALSE;
 #endif
 }
 
@@ -144,14 +144,14 @@ uint8 HalLedSet(uint8 leds, uint8 mode)
 		case HAL_LED_MODE_BLINK:
 			{
 				/* Default blink, 1 time, D% duty cycle */
-				HalLedBlink (leds, 1, HAL_LED_DEFAULT_DUTY_CYCLE, HAL_LED_DEFAULT_FLASH_TIME);
+				HalLedBlink(leds, 1, HAL_LED_DEFAULT_DUTY_CYCLE, HAL_LED_DEFAULT_FLASH_TIME);
 			}
 			break;
 			
 		case HAL_LED_MODE_FLASH:
 			{
 				/* Default flash, N times, D% duty cycle */
-				HalLedBlink (leds, HAL_LED_DEFAULT_FLASH_COUNT, HAL_LED_DEFAULT_DUTY_CYCLE, HAL_LED_DEFAULT_FLASH_TIME);
+				HalLedBlink(leds, HAL_LED_DEFAULT_FLASH_COUNT, HAL_LED_DEFAULT_DUTY_CYCLE, HAL_LED_DEFAULT_FLASH_TIME);
 			}
 			break;
 	case HAL_LED_MODE_ON:

@@ -399,84 +399,84 @@ uint8 osal_timer_num_active( void )
  *
  * @return  none
  *********************************************************************/
-void osalTimerUpdate( uint16 updateTime )
+void osalTimerUpdate(uint16 updateTime)
 {
-  halIntState_t intState;
-  osalTimerRec_t *srchTimer;
-  osalTimerRec_t *prevTimer;
+	halIntState_t intState;
+	osalTimerRec_t *srchTimer;
+	osalTimerRec_t *prevTimer;
 
-  HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
-  // Update the system time
-  osal_systemClock += updateTime;
-  HAL_EXIT_CRITICAL_SECTION( intState );   // Re-enable interrupts.
+	HAL_ENTER_CRITICAL_SECTION(intState);  // Hold off interrupts.
+	// Update the system time
+	osal_systemClock += updateTime;
+	HAL_EXIT_CRITICAL_SECTION(intState);   // Re-enable interrupts.
 
-  // Look for open timer slot
-  if ( timerHead != NULL )
-  {
-    // Add it to the end of the timer list
-    srchTimer = timerHead;
-    prevTimer = (void *)NULL;
+	// Look for open timer slot
+	if (timerHead != NULL)
+	{
+		// Add it to the end of the timer list
+		srchTimer = timerHead;
+		prevTimer = (void *)NULL;
 
-    // Look for open timer slot
-    while ( srchTimer )
-    {
-      osalTimerRec_t *freeTimer = NULL;
-     
-      HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
-      
-      if (srchTimer->timeout <= updateTime)
-      {
-        srchTimer->timeout = 0;
-      }
-      else
-      {
-        srchTimer->timeout = srchTimer->timeout - updateTime;
-      }
-      
-      // Check for reloading
-      if ( (srchTimer->timeout == 0) && (srchTimer->reloadTimeout) && (srchTimer->event_flag) )
-      {
-        // Notify the task of a timeout
-        osal_set_event( srchTimer->task_id, srchTimer->event_flag );
-        
-        // Reload the timer timeout value
-        srchTimer->timeout = srchTimer->reloadTimeout;
-      }
-      
-      // When timeout or delete (event_flag == 0)
-      if ( srchTimer->timeout == 0 || srchTimer->event_flag == 0 )
-      {
-        // Take out of list
-        if ( prevTimer == NULL )
-          timerHead = srchTimer->next;
-        else
-          prevTimer->next = srchTimer->next;
+		// Look for open timer slot
+		while (srchTimer)
+		{
+			osalTimerRec_t *freeTimer = NULL;
+			
+			HAL_ENTER_CRITICAL_SECTION(intState);  // Hold off interrupts.
+			
+			if (srchTimer->timeout <= updateTime)
+			{
+				srchTimer->timeout = 0;
+			}
+			else
+			{
+				srchTimer->timeout = srchTimer->timeout - updateTime;
+			}
+			
+			// Check for reloading
+			if ((srchTimer->timeout == 0) && (srchTimer->reloadTimeout) && (srchTimer->event_flag))
+			{
+				// Notify the task of a timeout
+				osal_set_event(srchTimer->task_id, srchTimer->event_flag);
+				
+				// Reload the timer timeout value
+				srchTimer->timeout = srchTimer->reloadTimeout;
+			}
+			
+			// When timeout or delete (event_flag == 0)
+			if (srchTimer->timeout == 0 || srchTimer->event_flag == 0)
+			{
+				// Take out of list
+				if (prevTimer == NULL)
+					timerHead = srchTimer->next;
+				else
+					prevTimer->next = srchTimer->next;
 
-        // Setup to free memory
-        freeTimer = srchTimer;
+				// Setup to free memory
+				freeTimer = srchTimer;
 
-        // Next
-        srchTimer = srchTimer->next;
-      }
-      else
-      {
-        // Get next
-        prevTimer = srchTimer;
-        srchTimer = srchTimer->next;
-      }
-      
-      HAL_EXIT_CRITICAL_SECTION( intState );   // Re-enable interrupts.
-      
-      if ( freeTimer )
-      {
-        if ( freeTimer->timeout == 0 )
-        {
-          osal_set_event( freeTimer->task_id, freeTimer->event_flag );
-        }
-        osal_mem_free( freeTimer );
-      }
-    }
-  }
+				// Next
+				srchTimer = srchTimer->next;
+			}
+			else
+			{
+				// Get next
+				prevTimer = srchTimer;
+				srchTimer = srchTimer->next;
+			}
+			
+			HAL_EXIT_CRITICAL_SECTION( intState );   // Re-enable interrupts.
+			
+			if (freeTimer)
+			{
+				if (freeTimer->timeout == 0)
+				{
+					osal_set_event(freeTimer->task_id, freeTimer->event_flag);
+				}
+				osal_mem_free(freeTimer);
+			}
+		}
+	}
 }
 
 #ifdef POWER_SAVING
