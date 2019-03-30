@@ -367,7 +367,7 @@ void HalLedUpdate(void)
  *
  * @return  none
  ***************************************************************************************************/
-void HalLedOnOff (uint8 leds, uint8 mode)
+void HalLedOnOff(uint8 leds, uint8 mode)
 {
 	if (leds & HAL_LED_1)
 	{
@@ -418,12 +418,12 @@ void HalLedOnOff (uint8 leds, uint8 mode)
  *
  * @return  led state
  ***************************************************************************************************/
-uint8 HalLedGetState ()
+uint8 HalLedGetState()
 {
 #if (HAL_LED == TRUE)
-  return HalLedState;
+	return HalLedState;
 #else
-  return 0;
+	return 0;
 #endif
 }
 
@@ -439,20 +439,20 @@ uint8 HalLedGetState ()
 void HalLedEnterSleep(void)
 {
 #ifdef BLINK_LEDS
-  /* Sleep ON */
-  HalLedStatusControl.sleepActive = TRUE;
+	/* Sleep ON */
+	HalLedStatusControl.sleepActive = TRUE;
 #endif /* BLINK_LEDS */
 
 #if (HAL_LED == TRUE)
-  /* Save the state of each led */
-  HalSleepLedState = 0;
-  HalSleepLedState |= HAL_STATE_LED1();
-  HalSleepLedState |= HAL_STATE_LED2() << 1;
-  HalSleepLedState |= HAL_STATE_LED3() << 2;
-  HalSleepLedState |= HAL_STATE_LED4() << 3;
+	/* Save the state of each led */
+	HalSleepLedState = 0;
+	HalSleepLedState |= HAL_STATE_LED1();
+	HalSleepLedState |= HAL_STATE_LED2() << 1;
+	HalSleepLedState |= HAL_STATE_LED3() << 2;
+	HalSleepLedState |= HAL_STATE_LED4() << 3;
 
-  /* TURN OFF all LEDs to save power */
-  HalLedOnOff (HAL_LED_ALL, HAL_LED_MODE_OFF);
+	/* TURN OFF all LEDs to save power */
+	HalLedOnOff(HAL_LED_ALL, HAL_LED_MODE_OFF);
 #endif /* HAL_LED */
 
 }
@@ -469,16 +469,16 @@ void HalLedEnterSleep(void)
 void HalLedExitSleep( void )
 {
 #if (HAL_LED == TRUE)
-  /* Load back the saved state */
-  HalLedOnOff(HalSleepLedState, HAL_LED_MODE_ON);
+	/* Load back the saved state */
+	HalLedOnOff(HalSleepLedState, HAL_LED_MODE_ON);
 
-  /* Restart - This takes care BLINKING LEDS */
-  HalLedUpdate();
+	/* Restart - This takes care BLINKING LEDS */
+	HalLedUpdate();
 #endif /* HAL_LED */
 
 #ifdef BLINK_LEDS
-  /* Sleep OFF */
-  HalLedStatusControl.sleepActive = FALSE;
+	/* Sleep OFF */
+	HalLedStatusControl.sleepActive = FALSE;
 #endif /* BLINK_LEDS */
 }
 

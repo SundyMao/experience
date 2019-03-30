@@ -20,10 +20,10 @@ extern "C"
 
 typedef enum
 {
-	MotorRotation_none = 0,
-	MotorRotation_clockwise,
-	MotorRotation_counterClockwise
-} MotorRotation;
+	RotationDirection_none = 0,
+	RotationDirection_clockwise,
+	RotationDirection_counterClockwise
+} RotationDirection;
 
 /*
  * Initialize Motor Service.
@@ -33,7 +33,7 @@ void HalMotor_init(void);
 /*
 * Rotate the motor according to the specified steps and directions
 */
-void HalMotor_run(uint8 step, MotorRotation rotation);
+void HalMotor_run(uint8 step, RotationDirection dir);
 
 #ifdef __cplusplus
 }

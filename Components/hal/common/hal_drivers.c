@@ -54,6 +54,7 @@
 #include "hal_timer.h"
 #include "hal_uart.h"
 #include "hal_sleep.h"
+#include "hal/include/hal_motor.h"
 #if (defined HAL_AES) && (HAL_AES == TRUE)
   #include "hal_aes.h"
 #endif
@@ -90,7 +91,8 @@
  **************************************************************************************************/
 uint8 Hal_TaskID;
 
-extern void HalLedUpdate( void ); /* Notes: This for internal only so it shouldn't be in hal_led.h */
+extern void HalLedUpdate(void); /* Notes: This for internal only so it shouldn't be in hal_led.h */
+extern void HalMotor_update(void); /* Notes: This for internal only so it shouldn't be in hal_motor.h */
 
 /**************************************************************************************************
  *                                      FUNCTIONS - API
@@ -216,42 +218,40 @@ uint16 Hal_ProcessEvent(uint8 task_id, uint16 events)
 		return events ^ HAL_LED_BLINK_EVENT;
 	}
 
-  if (events & HAL_KEY_EVENT)
-  {
+	if (events & HAL_KEY_EVENT)
+	{
 
 #if (defined HAL_KEY) && (HAL_KEY == TRUE)
-    /* Check for keys */
-    HalKeyPoll();
+		/* Check for keys */
+		HalKeyPoll();
 
-    /* if interrupt disabled, do next polling */
-    if (!Hal_KeyIntEnable)
-    {
-      osal_start_timerEx( Hal_TaskID, HAL_KEY_EVENT, 100);
-    }
+		/* if interrupt disabled, do next polling */
+		if (!Hal_KeyIntEnable)
+		{
+			osal_start_timerEx( Hal_TaskID, HAL_KEY_EVENT, 100);
+		}
 #endif // HAL_KEY
-
-    return events ^ HAL_KEY_EVENT;
-  }
+		return events ^ HAL_KEY_EVENT;
+	}
 
 #ifdef POWER_SAVING
-  if ( events & HAL_SLEEP_TIMER_EVENT )
-  {
-    halRestoreSleepLevel();
-    return events ^ HAL_SLEEP_TIMER_EVENT;
-  }
+	if ( events & HAL_SLEEP_TIMER_EVENT )
+	{
+		halRestoreSleepLevel();
+		return events ^ HAL_SLEEP_TIMER_EVENT;
+	}
 #endif
 
 #ifdef CC2591_COMPRESSION_WORKAROUND
-  if ( events & PERIOD_RSSI_RESET_EVT )
-  {
-    macRxResetRssi();
-    return (events ^ PERIOD_RSSI_RESET_EVT);
-  }
+	if ( events & PERIOD_RSSI_RESET_EVT )
+	{
+		macRxResetRssi();
+		return (events ^ PERIOD_RSSI_RESET_EVT);
+	}
 #endif
-  
-  /* Nothing interested, discard the message */
-  return 0;
 
+	/* Nothing interested, discard the message */
+	return 0;
 }
 
 /**************************************************************************************************
