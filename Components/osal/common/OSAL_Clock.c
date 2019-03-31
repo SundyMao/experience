@@ -128,9 +128,9 @@ UTCTime OSAL_timeSeconds = 0;
 /*********************************************************************
  * LOCAL FUNCTION PROTOTYPES
  */
-static uint8 monthLength( uint8 lpyr, uint8 mon );
+static uint8 monthLength(uint8 lpyr, uint8 mon);
 
-static void osalClockUpdate( uint16 elapsedMSec );
+static void osalClockUpdate(uint16 elapsedMSec);
 
 /*********************************************************************
  * FUNCTIONS
@@ -195,17 +195,17 @@ void osalTimeUpdate(void)
  *
  * @return  none
  */
-static void osalClockUpdate( uint16 elapsedMSec )
+static void osalClockUpdate(uint16 elapsedMSec)
 {
-  // Add elapsed milliseconds to the saved millisecond portion of time
-  timeMSec += elapsedMSec;
+	// Add elapsed milliseconds to the saved millisecond portion of time
+	timeMSec += elapsedMSec;
 
-  // Roll up milliseconds to the number of seconds
-  if ( timeMSec >= 1000 )
-  {
-    OSAL_timeSeconds += timeMSec / 1000;
-    timeMSec = timeMSec % 1000;
-  }
+	// Roll up milliseconds to the number of seconds
+	if (timeMSec >= 1000)
+	{
+		OSAL_timeSeconds += timeMSec / 1000;
+		timeMSec = timeMSec % 1000;
+	}
 }
 
 /*********************************************************************
@@ -219,9 +219,9 @@ static void osalClockUpdate( uint16 elapsedMSec )
  *
  * @return  none
  */
-void osal_setClock( UTCTime newTime )
+void osal_setClock(UTCTime newTime)
 {
-  OSAL_timeSeconds = newTime;
+	OSAL_timeSeconds = newTime;
 }
 
 /*********************************************************************
@@ -236,9 +236,9 @@ void osal_setClock( UTCTime newTime )
  * @return  number of seconds since 0 hrs, 0 minutes, 0 seconds,
  *          on the 1st of January 2000 UTC
  */
-UTCTime osal_getClock( void )
+UTCTime osal_getClock(void)
 {
-  return ( OSAL_timeSeconds );
+	return OSAL_timeSeconds;
 }
 
 /*********************************************************************

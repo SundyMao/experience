@@ -91,8 +91,8 @@
  **************************************************************************************************/
 uint8 Hal_TaskID;
 
-extern void HalLedUpdate(void); /* Notes: This for internal only so it shouldn't be in hal_led.h */
-extern void HalMotor_update(void); /* Notes: This for internal only so it shouldn't be in hal_motor.h */
+extern void HalLedUpdate(void);		/* Notes: This for internal only so it shouldn't be in hal_led.h */
+extern void HalMotor_update(void);	/* Notes: This for internal only so it shouldn't be in hal_motor.h */
 
 /**************************************************************************************************
  *                                      FUNCTIONS - API
@@ -109,11 +109,11 @@ extern void HalMotor_update(void); /* Notes: This for internal only so it should
  **************************************************************************************************/
 void Hal_Init( uint8 task_id )
 {
-  /* Register task ID */
-  Hal_TaskID = task_id;
-  
-#ifdef CC2591_COMPRESSION_WORKAROUND  
-  osal_start_reload_timer( Hal_TaskID, PERIOD_RSSI_RESET_EVT, PERIOD_RSSI_RESET_TIMEOUT );
+	/* Register task ID */
+	Hal_TaskID = task_id;
+
+#ifdef CC2591_COMPRESSION_WORKAROUND
+	osal_start_reload_timer(Hal_TaskID, PERIOD_RSSI_RESET_EVT, PERIOD_RSSI_RESET_TIMEOUT);
 #endif  
 }
 
