@@ -9,6 +9,7 @@
 #include "hal/include/hal_motor.h"
 #include "hal/include/hal_drivers.h"
 #include "osal/include/osal.h"
+#include <ioCC2530.h>
 
 #define MOTOR_PLUSE_INTERVAL 100
 
@@ -19,6 +20,10 @@ typedef enum
 	MotorPhase_b,
 	MotorPhase_c,
 	MotorPhase_d,
+	MotorPhase_e,
+	MotorPhase_f,
+	MotorPhase_g,
+	MotorPhase_h,
 	MotorPhase_max
 } MotorPhase;
 
@@ -29,7 +34,12 @@ typedef struct
 	MotorPhase phase;
 } HalMotorControl_t;
 
+uint8 g_phaseTableClockwise[]        = {0x00, 0x09, 0x08, 0x0c, 0x04, 0x06, 0x02, 0x03, 0x01}; // 半步工作 顺时针 0x00 为占位内容
+uint8 g_phaseTableCounterClockwise[] = {0x00, 0x01, 0x03, 0x02, 0x06, 0x04, 0x0c, 0x08, 0x09}; // 半步工作 逆时针 0x00 为占位内容
+
 static HalMotorControl_t g_motorControl;
+
+#define HalMotor_port P0   // 
 
 /********************************************************************************
  *									Local Function								*
@@ -135,6 +145,60 @@ void HalMotor_stop(void)
 MotorPhase HalMotor_runOneStep(MotorPhase currentPhase, RotationDirection currentDir)
 {
 	//TODO: return next phase status
-	MotorPhase nextPhase = MotorPhase_d;
+
+	if (currentDir == RotationDirection_clockwise)
+		HalMotor_port = g_phaseTableClockwise[currentPhase];
+	else
+		HalMotor_port = g_phaseTableCounterClockwise[currentPhase];
+
+	MotorPhase nextPhase = currentPhase + 1;
+	if (nextPhase > 8)
+		nextPhase = 1;
+
 	return nextPhase;
 }
+
+// example code
+/*
+
+uint8 table_l[] = {0x09, 0x08, 0x0c, 0x04, 0x06, 0x02, 0x03, 0x01}; // 半步工作 顺时针
+uint8 table_r[] = {0x01, 0x03, 0x02, 0x06, 0x04, 0x0c, 0x08, 0x09}; // 半步工作 逆时针
+
+uint8 step;
+
+void DelayMS(uint msec)
+{
+	uint8 x, y;
+	for (x = msec; x>0; x--)
+	{
+		for (y = 110; y > 0; y--);
+	}
+}
+
+void main(void)
+{
+	P0DIR = 0x0F;
+	while(1)
+	{
+		for (int i = 0; i < 1000; i++)
+		{
+			if (step > 7)
+				step = 0;
+			P0 = table_l[step];
+			step++;
+			DelayMS(10);
+		}
+		DelayMS(50);
+		for (int i = 0; i < 1000; i++)
+		{
+			if (step > 7)
+				step = 0;
+			P0 = table_r[step];
+			step++;
+			DelayMS(10);
+		}
+		DelayMS(50);
+	}
+}
+
+*/
