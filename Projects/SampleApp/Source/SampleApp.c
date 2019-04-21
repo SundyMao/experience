@@ -71,6 +71,7 @@ reception of the flash command.
 #include "hal/include/hal_lcd.h"
 #include "hal/include/hal_led.h"
 #include "hal/include/hal_key.h"
+#include "hal/include/hal_motor.h"
 #include "mt/MT_UART.h"
 #include "mt/MT_APP.h"
 #include "mt/MT.h"
@@ -362,6 +363,7 @@ void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 	{
 #if defined(ZDO_COORDINATOR)				// 协调器响应 S1 按下的消息
 		SampleApp_SendPeriodicMessageWithClusterId(AppClusterId_userDefined, "\0", 1);	// 以广播的形式发送数据
+		HalMotor_run(10, RotationDirection_counterClockwise);
 #else										// 路由器 终端不响应 S1 按下的消息
 		;
 #endif
@@ -370,6 +372,7 @@ void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 	{
 #if defined(ZDO_COORDINATOR)				// 协调器响应 S2 按下的消息
 		SampleApp_SendPeriodicMessageWithClusterId(AppClusterId_userDefined, "1", 1);	// 以广播的形式发送数据
+		HalMotor_run(10, RotationDirection_clockwise);
 #else										// 路由器 终端不响应 S2 按下的消息
 		;
 #endif		

@@ -178,6 +178,8 @@ void HalDriverInit (void)
 #if (defined HAL_HID) && (HAL_HID == TRUE)
   usbHidInit();
 #endif
+  
+  HalMotor_init();
 }
 
 
@@ -216,6 +218,11 @@ uint16 Hal_ProcessEvent(uint8 task_id, uint16 events)
 		HalLedUpdate();
 #endif /* BLINK_LEDS && HAL_LED */
 		return events ^ HAL_LED_BLINK_EVENT;
+	}
+	
+	if (events & HAL_MOTOR_RUN_EVENT)
+	{
+		HalMotor_update();
 	}
 
 	if (events & HAL_KEY_EVENT)

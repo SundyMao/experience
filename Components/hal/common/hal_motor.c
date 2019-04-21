@@ -1,17 +1,32 @@
 /**************************************************************************************************
   Filename:       hal_led.c
   Revised:        $Date: 2019-03-31 13:43:32(UTC+8) $
-  Revision:       $Revision: 29281 $
+  Revision:       $Revision: 0 $
 
   Description:    This file contains the interface to the HAL Steering engine Service.
 **************************************************************************************************/
 
+#include <ioCC2530.h>
+
 #include "hal/include/hal_motor.h"
 #include "hal/include/hal_drivers.h"
 #include "osal/include/osal.h"
-#include <ioCC2530.h>
 
-#define MOTOR_PLUSE_INTERVAL 100
+/*************************************************************************************************
+* P0_0 connect PIN A
+* P0_1 connect PIN B
+* P0_2 connect PIN C
+* P0_3 connect PIN D
+*/
+#define HalMotor_port P0   //
+#define HalMotor_portDir P0DIR 
+
+uint8 g_phaseTableClockwise[]        = { 0x00, 0x09, 0x08, 0x0c, 0x04, 0x06, 0x02, 0x03, 0x01 }; // �벽���� ˳ʱ�� 0x00 ռλ
+uint8 g_phaseTableCounterClockwise[] = { 0x00, 0x01, 0x03, 0x02, 0x06, 0x04, 0x0c, 0x08, 0x09 }; // �벽���� ��ʱ�� 0x00 ռλ
+
+
+// debug for 1000, actually 10
+#define MOTOR_PLUSE_INTERVAL 5000
 
 typedef enum
 {
@@ -34,12 +49,7 @@ typedef struct
 	MotorPhase phase;
 } HalMotorControl_t;
 
-uint8 g_phaseTableClockwise[]        = {0x00, 0x09, 0x08, 0x0c, 0x04, 0x06, 0x02, 0x03, 0x01}; // 半步工作 顺时针 0x00 为占位内容
-uint8 g_phaseTableCounterClockwise[] = {0x00, 0x01, 0x03, 0x02, 0x06, 0x04, 0x0c, 0x08, 0x09}; // 半步工作 逆时针 0x00 为占位内容
-
 static HalMotorControl_t g_motorControl;
-
-#define HalMotor_port P0   // 
 
 /********************************************************************************
  *									Local Function								*
@@ -59,6 +69,7 @@ void HalMotor_update(void);
  ***************************************************************************************************/
 void HalMotor_init(void)
 {
+	HalMotor_portDir = 0x0F;
 }
 
 /***************************************************************************************************
@@ -76,8 +87,10 @@ void HalMotor_run(int step, RotationDirection dir)
 	if (step == 0 || dir == RotationDirection_none)
 		return;
 
+	bool keepStatus = true;
 	if (g_motorControl.dir == dir)
 	{
+		keepStatus = g_motorControl.remainingStep != 0;
 		g_motorControl.remainingStep += step;
 	}
 	else
@@ -88,9 +101,14 @@ void HalMotor_run(int step, RotationDirection dir)
 		g_motorControl.dir = dir;
 		g_motorControl.phase = MotorPhase_none;
 		g_motorControl.remainingStep = step;
+		
+		keepStatus = false;
 	}
-	osal_stop_timerEx(Hal_TaskID, HAL_MOTOR_RUN_EVENT);
-	osal_set_event(Hal_TaskID, HAL_MOTOR_RUN_EVENT);
+	
+	if (!keepStatus)
+	{
+		osal_set_event(Hal_TaskID, HAL_MOTOR_RUN_EVENT);
+	}
 }
 
 /***************************************************************************************************
@@ -106,13 +124,14 @@ void HalMotor_update(void)
 {
 	if(g_motorControl.remainingStep != 0)
 	{
-		HalMotor_runOneStep(g_motorControl.phase, g_motorControl.dir);
+		g_motorControl.phase = HalMotor_runOneStep(g_motorControl.phase, g_motorControl.dir);
 		g_motorControl.remainingStep -= 1;
 	}
+	
 	if(g_motorControl.remainingStep != 0)
-	{
-		osal_start_timerEx(Hal_TaskID, HAL_LED_BLINK_EVENT, MOTOR_PLUSE_INTERVAL);	/* Schedule event */
-	}
+		osal_start_timerEx(Hal_TaskID, HAL_MOTOR_RUN_EVENT, MOTOR_PLUSE_INTERVAL);	/* Schedule event */
+	else
+		osal_clear_event(Hal_TaskID, HAL_MOTOR_RUN_EVENT);
 }
 
 /***************************************************************************************************
@@ -129,7 +148,12 @@ void HalMotor_stop(void)
 	g_motorControl.dir = RotationDirection_none;
 	g_motorControl.remainingStep = 0;
 	g_motorControl.phase = MotorPhase_none;
-	// TODO: set port to stop motor.
+
+	// set port with 0x00
+	HalMotor_port = g_phaseTableClockwise[0];
+	
+	osal_stop_timerEx(Hal_TaskID, HAL_MOTOR_RUN_EVENT);
+	osal_clear_event(Hal_TaskID, HAL_MOTOR_RUN_EVENT);
 }
 
 /***************************************************************************************************
@@ -144,16 +168,14 @@ void HalMotor_stop(void)
  ***************************************************************************************************/
 MotorPhase HalMotor_runOneStep(MotorPhase currentPhase, RotationDirection currentDir)
 {
-	//TODO: return next phase status
-
 	if (currentDir == RotationDirection_clockwise)
 		HalMotor_port = g_phaseTableClockwise[currentPhase];
 	else
 		HalMotor_port = g_phaseTableCounterClockwise[currentPhase];
 
-	MotorPhase nextPhase = currentPhase + 1;
-	if (nextPhase > 8)
-		nextPhase = 1;
+	MotorPhase nextPhase = (MotorPhase)((int)currentPhase + 1);
+	if (nextPhase >= MotorPhase_max)
+		nextPhase = MotorPhase_a;
 
 	return nextPhase;
 }
@@ -161,9 +183,8 @@ MotorPhase HalMotor_runOneStep(MotorPhase currentPhase, RotationDirection curren
 // example code
 /*
 
-uint8 table_l[] = {0x09, 0x08, 0x0c, 0x04, 0x06, 0x02, 0x03, 0x01}; // 半步工作 顺时针
-uint8 table_r[] = {0x01, 0x03, 0x02, 0x06, 0x04, 0x0c, 0x08, 0x09}; // 半步工作 逆时针
-
+uint8 table_l[] = {0x09, 0x08, 0x0c, 0x04, 0x06, 0x02, 0x03, 0x01}; // 半步工作 顺时�?
+uint8 table_r[] = {0x01, 0x03, 0x02, 0x06, 0x04, 0x0c, 0x08, 0x09}; // 半步工作 逆时�?
 uint8 step;
 
 void DelayMS(uint msec)
