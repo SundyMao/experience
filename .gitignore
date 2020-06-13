@@ -4,3 +4,5 @@
 /Projects/SampleApp/CC2530DB/*.dep
 /Projects/SampleApp/CC2530DB/settings
 /.vscode
+/Projects/SampleApp/CC2530DB/*.user
+/Projects/SampleApp/CC2530DB/.vs
