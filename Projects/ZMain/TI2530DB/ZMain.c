@@ -192,9 +192,9 @@ static void zmain_ext_addr(void)
     if (osal_memcmp(aExtendedAddress, nullAddr, Z_EXTADDR_LEN))
     {
       // Attempt to read the extended address from the designated location in the Info Page.
-      if (!osal_memcmp((uint8 *)(P_INFOPAGE+HAL_INFOP_IEEE_OSET), nullAddr, Z_EXTADDR_LEN))
+      if (!osal_memcmp((uint8 *)(P_INFOPAGE + HAL_INFOP_IEEE_OSET), nullAddr, Z_EXTADDR_LEN))
       {
-        osal_memcpy(aExtendedAddress, (uint8 *)(P_INFOPAGE+HAL_INFOP_IEEE_OSET), Z_EXTADDR_LEN);
+        osal_memcpy(aExtendedAddress, (uint8 *)(P_INFOPAGE + HAL_INFOP_IEEE_OSET), Z_EXTADDR_LEN);
       }
       else  // No valid extended address was found.
       {

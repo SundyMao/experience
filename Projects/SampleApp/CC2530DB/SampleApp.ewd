@@ -616,7 +616,7 @@
         </option>
         <option>
           <name>SimPspConfigFile</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\config\test.psp.config</state>
         </option>
       </data>
     </settings>
@@ -1311,7 +1311,7 @@
         </option>
         <option>
           <name>MemOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OCProcessor</name>
@@ -1890,7 +1890,7 @@
         </option>
         <option>
           <name>SimPspConfigFile</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\config\test.psp.config</state>
         </option>
       </data>
     </settings>

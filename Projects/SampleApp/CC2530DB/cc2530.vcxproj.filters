@@ -562,23 +562,23 @@
     <None Include="..\..\..\Components\osal\mcu\cc2530\OSAL_Math.s51">
       <Filter>OSAL</Filter>
     </None>
-    <None Include="..\..\..\..\Tools\CC2530DB\f8w2530.xcl">
-      <Filter>Tools</Filter>
-    </None>
-    <None Include="..\..\..\..\Tools\CC2530DB\f8wConfig.cfg">
-      <Filter>Tools</Filter>
-    </None>
-    <None Include="..\..\..\..\Tools\CC2530DB\f8wCoord.cfg">
-      <Filter>Tools</Filter>
-    </None>
-    <None Include="..\..\..\..\Tools\CC2530DB\f8wEndev.cfg">
-      <Filter>Tools</Filter>
-    </None>
-    <None Include="..\..\..\..\Tools\CC2530DB\f8wRouter.cfg">
-      <Filter>Tools</Filter>
-    </None>
     <None Include="..\..\ZMain\TI2530DB\chipcon_cstartup.s51">
       <Filter>ZMain</Filter>
+    </None>
+    <None Include="..\..\Tools\CC2530DB\f8wConfig.cfg">
+      <Filter>Tools</Filter>
+    </None>
+    <None Include="..\..\Tools\CC2530DB\f8w2530.xcl">
+      <Filter>Tools</Filter>
+    </None>
+    <None Include="..\..\Tools\CC2530DB\f8wCoord.cfg">
+      <Filter>Tools</Filter>
+    </None>
+    <None Include="..\..\Tools\CC2530DB\f8wRouter.cfg">
+      <Filter>Tools</Filter>
+    </None>
+    <None Include="..\..\Tools\CC2530DB\f8wEndev.cfg">
+      <Filter>Tools</Filter>
     </None>
   </ItemGroup>
 </Project>

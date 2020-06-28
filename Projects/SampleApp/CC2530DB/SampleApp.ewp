@@ -278,7 +278,6 @@
           <state>MT_TASK</state>
           <state>MT_SYS_FUNC</state>
           <state>MT_ZDO_FUNC</state>
-          <state>LCD_SUPPORTED=DEBUG</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1337,7 +1336,6 @@
           <state>MT_TASK</state>
           <state>MT_SYS_FUNC</state>
           <state>MT_ZDO_FUNC</state>
-          <state>LCD_SUPPORTED=DEBUG</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -2397,7 +2395,6 @@
           <state>MT_TASK</state>
           <state>MT_SYS_FUNC</state>
           <state>MT_ZDO_FUNC</state>
-          <state>LCD_SUPPORTED=DEBUG</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

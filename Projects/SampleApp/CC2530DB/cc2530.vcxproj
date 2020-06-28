@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="CoordinatorEB|Win32">
+      <Configuration>CoordinatorEB</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="EndDeviceEB|Win32">
+      <Configuration>EndDeviceEB</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RouterEB|Win32">
+      <Configuration>RouterEB</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Components\hal\include\hal_adc.h" />
+    <ClInclude Include="..\..\..\Components\hal\include\hal_assert.h" />
+    <ClInclude Include="..\..\..\Components\hal\include\hal_board.h" />
+    <ClInclude Include="..\..\..\Components\hal\include\hal_ccm.h" />
+    <ClInclude Include="..\..\..\Components\hal\include\hal_defs.h" />
+    <ClInclude Include="..\..\..\Components\hal\include\hal_drivers.h" />
+    <ClInclude Include="..\..\..\Components\hal\include\hal_flash.h" />
+    <ClInclude Include="..\..\..\Components\hal\include\hal_key.h" />
+    <ClInclude Include="..\..\..\Components\hal\include\hal_lcd.h" />
+    <ClInclude Include="..\..\..\Components\hal\include\hal_led.h" />
+    <ClInclude Include="..\..\..\Components\hal\include\hal_sleep.h" />
+    <ClInclude Include="..\..\..\Components\hal\include\hal_timer.h" />
+    <ClInclude Include="..\..\..\Components\hal\include\hal_uart.h" />
+    <ClInclude Include="..\..\..\Components\hal\target\CC2530EB\hal_aes.h" />
+    <ClInclude Include="..\..\..\Components\hal\target\CC2530EB\hal_board_cfg.h" />
+    <ClInclude Include="..\..\..\Components\hal\target\CC2530EB\hal_dma.h" />
+    <ClInclude Include="..\..\..\Components\hal\target\CC2530EB\hal_mcu.h" />
+    <ClInclude Include="..\..\..\Components\hal\target\CC2530EB\hal_types.h" />
+    <ClInclude Include="..\..\..\Components\mac\high_level\mac_high_level.h" />
+    <ClInclude Include="..\..\..\Components\mac\high_level\mac_pib.h" />
+    <ClInclude Include="..\..\..\Components\mac\high_level\mac_spec.h" />
+    <ClInclude Include="..\..\..\Components\mac\include\mac_api.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\mac_assert.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\mac_autopend.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\mac_backoff_timer.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\mac_low_level.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\mac_radio.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\mac_rx.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\mac_rx_onoff.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\mac_sleep.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\mac_tx.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\single_chip\mac_csp_tx.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\single_chip\mac_mcu.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\single_chip\mac_mem.h" />
+    <ClInclude Include="..\..\..\Components\mac\low_level\srf04\single_chip\mac_radio_defs.h" />
+    <ClInclude Include="..\..\..\Components\mt\DebugTrace.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_AF.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_APP.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_DEBUG.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_MAC.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_NWK.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_OTA.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_RPC.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_SAPI.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_SYS.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_TASK.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_UART.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_UTIL.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_VERSION.h" />
+    <ClInclude Include="..\..\..\Components\mt\MT_ZDO.h" />
+    <ClInclude Include="..\..\..\Components\osal\include\comdef.h" />
+    <ClInclude Include="..\..\..\Components\osal\include\OSAL.h" />
+    <ClInclude Include="..\..\..\Components\osal\include\OSAL_Clock.h" />
+    <ClInclude Include="..\..\..\Components\osal\include\OSAL_Memory.h" />
+    <ClInclude Include="..\..\..\Components\osal\include\OSAL_Nv.h" />
+    <ClInclude Include="..\..\..\Components\osal\include\OSAL_PwrMgr.h" />
+    <ClInclude Include="..\..\..\Components\osal\include\OSAL_Tasks.h" />
+    <ClInclude Include="..\..\..\Components\osal\include\OSAL_Timers.h" />
+    <ClInclude Include="..\..\..\Components\osal\include\ZComDef.h" />
+    <ClInclude Include="..\..\..\Components\services\saddr\saddr.h" />
+    <ClInclude Include="..\..\..\Components\stack\af\AF.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\AddrMgr.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\APS.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\APSMEDE.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\aps_frag.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\aps_groups.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\aps_util.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\AssocList.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\BindingTable.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\NLMEDE.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\nwk.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\nwk_bufs.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\nwk_globals.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\nwk_util.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\reflecttrack.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\rtg.h" />
+    <ClInclude Include="..\..\..\Components\stack\nwk\stub_aps.h" />
+    <ClInclude Include="..\..\..\Components\stack\sec\ssp.h" />
+    <ClInclude Include="..\..\..\Components\stack\sec\ssp_hash.h" />
+    <ClInclude Include="..\..\..\Components\stack\sys\ZGlobals.h" />
+    <ClInclude Include="..\..\..\Components\stack\zdo\ZDApp.h" />
+    <ClInclude Include="..\..\..\Components\stack\zdo\ZDConfig.h" />
+    <ClInclude Include="..\..\..\Components\stack\zdo\ZDNwkMgr.h" />
+    <ClInclude Include="..\..\..\Components\stack\zdo\ZDObject.h" />
+    <ClInclude Include="..\..\..\Components\stack\zdo\ZDProfile.h" />
+    <ClInclude Include="..\..\..\Components\stack\zdo\ZDSecMgr.h" />
+    <ClInclude Include="..\..\..\Components\zmac\f8w\zmac_internal.h" />
+    <ClInclude Include="..\..\..\Components\zmac\ZMAC.h" />
+    <ClInclude Include="..\..\ZMain\TI2530DB\OnBoard.h" />
+    <ClInclude Include="..\Source\SampleApp.h" />
+    <ClInclude Include="..\Source\SampleAppHw.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Components\hal\common\hal_assert.c" />
+    <ClCompile Include="..\..\..\Components\hal\common\hal_drivers.c" />
+    <ClCompile Include="..\..\..\Components\hal\target\CC2530EB\hal_adc.c" />
+    <ClCompile Include="..\..\..\Components\hal\target\CC2530EB\hal_dma.c" />
+    <ClCompile Include="..\..\..\Components\hal\target\CC2530EB\hal_flash.c" />
+    <ClCompile Include="..\..\..\Components\hal\target\CC2530EB\hal_key.c" />
+    <ClCompile Include="..\..\..\Components\hal\target\CC2530EB\hal_lcd.c" />
+    <ClCompile Include="..\..\..\Components\hal\target\CC2530EB\hal_led.c" />
+    <ClCompile Include="..\..\..\Components\hal\target\CC2530EB\hal_sleep.c" />
+    <ClCompile Include="..\..\..\Components\hal\target\CC2530EB\hal_startup.c" />
+    <ClCompile Include="..\..\..\Components\hal\target\CC2530EB\hal_timer.c" />
+    <ClCompile Include="..\..\..\Components\hal\target\CC2530EB\hal_uart.c" />
+    <ClCompile Include="..\..\..\Components\mac\high_level\mac_cfg.c" />
+    <ClCompile Include="..\..\..\Components\mac\high_level\mac_pib.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\mac_autopend.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\mac_backoff_timer.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\mac_low_level.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\mac_radio.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\mac_rx.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\mac_rx_onoff.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\mac_sleep.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\mac_tx.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\single_chip\mac_csp_tx.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\single_chip\mac_mcu.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\single_chip\mac_mem.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\single_chip\mac_radio_defs.c" />
+    <ClCompile Include="..\..\..\Components\mac\low_level\srf04\single_chip\mac_rffrontend.c" />
+    <ClCompile Include="..\..\..\Components\mt\DebugTrace.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_AF.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_APP.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_DEBUG.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_MAC.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_NWK.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_OTA.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_SAPI.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_SYS.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_TASK.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_UART.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_UTIL.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_VERSION.c" />
+    <ClCompile Include="..\..\..\Components\mt\MT_ZDO.c" />
+    <ClCompile Include="..\..\..\Components\osal\common\OSAL.c" />
+    <ClCompile Include="..\..\..\Components\osal\common\OSAL_Clock.c" />
+    <ClCompile Include="..\..\..\Components\osal\common\OSAL_Memory.c" />
+    <ClCompile Include="..\..\..\Components\osal\common\OSAL_PwrMgr.c" />
+    <ClCompile Include="..\..\..\Components\osal\common\OSAL_Timers.c" />
+    <ClCompile Include="..\..\..\Components\osal\mcu\cc2530\OSAL_Nv.c" />
+    <ClCompile Include="..\..\..\Components\services\saddr\saddr.c" />
+    <ClCompile Include="..\..\..\Components\stack\af\AF.c" />
+    <ClCompile Include="..\..\..\Components\stack\nwk\BindingTable.c" />
+    <ClCompile Include="..\..\..\Components\stack\nwk\nwk_globals.c" />
+    <ClCompile Include="..\..\..\Components\stack\nwk\stub_aps.c" />
+    <ClCompile Include="..\..\..\Components\stack\sys\ZGlobals.c" />
+    <ClCompile Include="..\..\..\Components\stack\zdo\ZDApp.c" />
+    <ClCompile Include="..\..\..\Components\stack\zdo\ZDConfig.c" />
+    <ClCompile Include="..\..\..\Components\stack\zdo\ZDNwkMgr.c" />
+    <ClCompile Include="..\..\..\Components\stack\zdo\ZDObject.c" />
+    <ClCompile Include="..\..\..\Components\stack\zdo\ZDProfile.c" />
+    <ClCompile Include="..\..\..\Components\stack\zdo\ZDSecMgr.c" />
+    <ClCompile Include="..\..\..\Components\zmac\f8w\zmac.c" />
+    <ClCompile Include="..\..\..\Components\zmac\f8w\zmac_cb.c" />
+    <ClCompile Include="..\..\ZMain\TI2530DB\OnBoard.c" />
+    <ClCompile Include="..\..\ZMain\TI2530DB\ZMain.c" />
+    <ClCompile Include="..\Source\OSAL_SampleApp.c" />
+    <ClCompile Include="..\Source\SampleApp.c" />
+    <ClCompile Include="Source\SampleAppHw.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Components\osal\mcu\cc2530\OSAL_Math.s51" />
+    <None Include="..\..\Tools\CC2530DB\f8w2530.xcl" />
+    <None Include="..\..\Tools\CC2530DB\f8wConfig.cfg" />
+    <None Include="..\..\Tools\CC2530DB\f8wCoord.cfg" />
+    <None Include="..\..\Tools\CC2530DB\f8wEndev.cfg" />
+    <None Include="..\..\Tools\CC2530DB\f8wRouter.cfg" />
+    <None Include="..\..\ZMain\TI2530DB\chipcon_cstartup.s51" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{8DE0EF78-40CB-48C8-AC73-D27B017B3FBB}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>ConsoleApplication1</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>cc2530</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='EndDeviceEB|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>
+    </PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CoordinatorEB|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset />
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RouterEB|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset />
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='EndDeviceEB|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='CoordinatorEB|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='RouterEB|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='EndDeviceEB|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.0 Evaluation\8051\inc\clib;C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.0 Evaluation\8051\inc;$(IncludePath)</IncludePath>
+    <ReferencePath />
+    <LibraryWPath />
+    <ExcludePath>
+    </ExcludePath>
+    <LibraryPath />
+    <SourcePath />
+    <ExecutablePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CoordinatorEB|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.0 Evaluation\8051\inc\clib;C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.0 Evaluation\8051\inc;$(IncludePath)</IncludePath>
+    <ReferencePath />
+    <LibraryWPath />
+    <ExcludePath />
+    <LibraryPath />
+    <SourcePath />
+    <ExecutablePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RouterEB|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.0 Evaluation\8051\inc\clib;C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.0 Evaluation\8051\inc;$(IncludePath)</IncludePath>
+    <ReferencePath />
+    <LibraryWPath />
+    <ExcludePath />
+    <LibraryPath />
+    <SourcePath />
+    <ExecutablePath />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='EndDeviceEB|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>__IAR_SYSTEMS_ICC__;NWK_AUTO_POLL;ZTOOL_P1;MT_TASK;MT_SYS_FUNC;MT_ZDO_FUNC;MAX_BINDING_CLUSTER_IDS=4</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>.\;..\Source;..\..\ZMain\TI2530DB;..\..\..\Components;..\..\..\Components\hal\include;..\..\..\Components\hal\target\CC2530EB;..\..\..\Components\mac\include;..\..\..\Components\mac\high_level;..\..\..\Components\mac\low_level\srf04;..\..\..\Components\mac\low_level\srf04\single_chip;..\..\..\Components\mt;..\..\..\Components\osal\include;..\..\..\Components\services\saddr;..\..\..\Components\services\sdata;..\..\..\Components\stack\af;..\..\..\Components\stack\nwk;..\..\..\Components\stack\sapi;..\..\..\Components\stack\sec;..\..\..\Components\stack\sys;..\..\..\Components\stack\zdo;..\..\..\Components\zmac;..\..\..\Components\zmac\f8w</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies />
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='CoordinatorEB|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>__IAR_SYSTEMS_ICC__;ZTOOL_P1;MT_TASK;MT_SYS_FUNC;MT_ZDO_FUNC;MAC_CFG_APP_PENDING_QUEUE=TRUE;MAC_CFG_TX_DATA_MAX=5;MAC_CFG_TX_MAX=8;MAC_CFG_RX_MAX=5;ZDO_COORDINATOR;RTR_NWK;MAX_BINDING_CLUSTER_IDS=4</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>.\;..\Source;..\..\ZMain\TI2530DB;..\..\..\Components;..\..\..\Components\hal\include;..\..\..\Components\hal\target\CC2530EB;..\..\..\Components\mac\include;..\..\..\Components\mac\high_level;..\..\..\Components\mac\low_level\srf04;..\..\..\Components\mac\low_level\srf04\single_chip;..\..\..\Components\mt;..\..\..\Components\osal\include;..\..\..\Components\services\saddr;..\..\..\Components\services\sdata;..\..\..\Components\stack\af;..\..\..\Components\stack\nwk;..\..\..\Components\stack\sapi;..\..\..\Components\stack\sec;..\..\..\Components\stack\sys;..\..\..\Components\stack\zdo;..\..\..\Components\zmac;..\..\..\Components\zmac\f8w</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RouterEB|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>__IAR_SYSTEMS_ICC__;ZTOOL_P1;MT_TASK;MT_SYS_FUNC;MT_ZDO_FUNC;MAC_CFG_APP_PENDING_QUEUE=TRUE;MAC_CFG_TX_DATA_MAX=5;MAC_CFG_TX_MAX=8;MAC_CFG_RX_MAX=5;RTR_NWK;MAX_BINDING_CLUSTER_IDS=4</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>.\;..\Source;..\..\ZMain\TI2530DB;..\..\..\Components;..\..\..\Components\hal\include;..\..\..\Components\hal\target\CC2530EB;..\..\..\Components\mac\include;..\..\..\Components\mac\high_level;..\..\..\Components\mac\low_level\srf04;..\..\..\Components\mac\low_level\srf04\single_chip;..\..\..\Components\mt;..\..\..\Components\osal\include;..\..\..\Components\services\saddr;..\..\..\Components\services\sdata;..\..\..\Components\stack\af;..\..\..\Components\stack\nwk;..\..\..\Components\stack\sapi;..\..\..\Components\stack\sec;..\..\..\Components\stack\sys;..\..\..\Components\stack\zdo;..\..\..\Components\zmac;..\..\..\Components\zmac\f8w</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
