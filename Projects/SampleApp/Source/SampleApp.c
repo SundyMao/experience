@@ -180,9 +180,9 @@ void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, u
 */
 void SampleApp_Init(uint8 task_id)
 { 
-	SampleApp_TaskID = task_id;   //osal分配的任务ID随着用户添加任务的增多而改变
-	SampleApp_NwkState = DEV_INIT;//设备状态设定为ZDO层中定义的初始化状态
-	SampleApp_TransID = 0;        //消息发送ID（多消息时有顺序之分）
+	SampleApp_TaskID = task_id;					//osal分配的任务ID随着用户添加任务的增多而改变
+	SampleApp_NwkState = DEV_INIT;				//设备状态设定为ZDO层中定义的初始化状态
+	SampleApp_TransID = 0;						//消息发送ID（多消息时有顺序之分）
 	
 	// Device hardware initialization can be added here or in main() (Zmain.c).
 	// If the hardware is application specific - add it here.
@@ -210,24 +210,24 @@ void SampleApp_Init(uint8 task_id)
 	
 	// Setup for the periodic message's destination address 设置发送数据的方式和目的地址寻址模式
 	// Broadcast to everyone 发送模式:广播发送
-	SampleApp_Periodic_DstAddr.addrMode = (afAddrMode_t)AddrBroadcast;//广播
-	SampleApp_Periodic_DstAddr.endPoint = SAMPLEAPP_ENDPOINT; //指定端点号
-	SampleApp_Periodic_DstAddr.addr.shortAddr = 0xFFFF;//指定目的网络地址为广播地址
+	SampleApp_Periodic_DstAddr.addrMode = (afAddrMode_t)afAddrBroadcast;				//广播
+	SampleApp_Periodic_DstAddr.endPoint = SAMPLEAPP_ENDPOINT;							//指定端点号
+	SampleApp_Periodic_DstAddr.addr.shortAddr = 0xFFFF;									//指定目的网络地址为广播地址
 	
 	// Setup for the flash command's destination address - Group 1 组播发送
-	SampleApp_Flash_DstAddr.addrMode = (afAddrMode_t)afAddrGroup; //组寻址
-	SampleApp_Flash_DstAddr.endPoint = SAMPLEAPP_ENDPOINT; //指定端点号
-	SampleApp_Flash_DstAddr.addr.shortAddr = SAMPLEAPP_FLASH_GROUP;//组号0x0001
+	SampleApp_Flash_DstAddr.addrMode = (afAddrMode_t)afAddrGroup;						//组寻址
+	SampleApp_Flash_DstAddr.endPoint = SAMPLEAPP_ENDPOINT;								//指定端点号
+	SampleApp_Flash_DstAddr.addr.shortAddr = SAMPLEAPP_FLASH_GROUP;						//组号0x0001
 	
-	SampleApp_P2P_DstAddr.addrMode = (afAddrMode_t)Addr16Bit; // 点播
+	SampleApp_P2P_DstAddr.addrMode = (afAddrMode_t)Addr16Bit;							// 点播
 	SampleApp_P2P_DstAddr.endPoint = SAMPLEAPP_ENDPOINT; 
-	SampleApp_P2P_DstAddr.addr.shortAddr = 0x0000;            // 协调器地址
+	SampleApp_P2P_DstAddr.addr.shortAddr = 0x0000;										// 协调器地址
 	
 	// Fill out the endpoint description. 定义本设备用来通信的APS层端点描述符
-	SampleApp_epDesc.endPoint = SAMPLEAPP_ENDPOINT; //指定端点号
-	SampleApp_epDesc.task_id = &SampleApp_TaskID;   //SampleApp 描述符的任务ID
-	SampleApp_epDesc.simpleDesc = (SimpleDescriptionFormat_t *)&SampleApp_SimpleDesc;//SampleApp简单描述符
-	SampleApp_epDesc.latencyReq = noLatencyReqs;    //延时策略
+	SampleApp_epDesc.endPoint = SAMPLEAPP_ENDPOINT;										//指定端点号
+	SampleApp_epDesc.task_id = &SampleApp_TaskID;										//SampleApp 描述符的任务ID
+	SampleApp_epDesc.simpleDesc = (SimpleDescriptionFormat_t *)&SampleApp_SimpleDesc;	//SampleApp简单描述符
+	SampleApp_epDesc.latencyReq = noLatencyReqs;										//延时策略
 	
 	// Register the endpoint description with the AF
 	afRegister( &SampleApp_epDesc );    //向AF层登记描述符

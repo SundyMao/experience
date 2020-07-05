@@ -267,7 +267,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>__IAR_SYSTEMS_ICC__;NWK_AUTO_POLL;ZTOOL_P1;MT_TASK;MT_SYS_FUNC;MT_ZDO_FUNC;MAX_BINDING_CLUSTER_IDS=4</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__IAR_SYSTEMS_ICC__=8;NWK_AUTO_POLL;ZTOOL_P1;MT_TASK;MT_SYS_FUNC;MT_ZDO_FUNC;MAX_BINDING_CLUSTER_IDS=4;__near_func=</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>.\;..\Source;..\..\ZMain\TI2530DB;..\..\..\Components;..\..\..\Components\hal\include;..\..\..\Components\hal\target\CC2530EB;..\..\..\Components\mac\include;..\..\..\Components\mac\high_level;..\..\..\Components\mac\low_level\srf04;..\..\..\Components\mac\low_level\srf04\single_chip;..\..\..\Components\mt;..\..\..\Components\osal\include;..\..\..\Components\services\saddr;..\..\..\Components\services\sdata;..\..\..\Components\stack\af;..\..\..\Components\stack\nwk;..\..\..\Components\stack\sapi;..\..\..\Components\stack\sec;..\..\..\Components\stack\sys;..\..\..\Components\stack\zdo;..\..\..\Components\zmac;..\..\..\Components\zmac\f8w</AdditionalIncludeDirectories>
     </ClCompile>
@@ -284,7 +284,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>__IAR_SYSTEMS_ICC__;ZTOOL_P1;MT_TASK;MT_SYS_FUNC;MT_ZDO_FUNC;MAC_CFG_APP_PENDING_QUEUE=TRUE;MAC_CFG_TX_DATA_MAX=5;MAC_CFG_TX_MAX=8;MAC_CFG_RX_MAX=5;ZDO_COORDINATOR;RTR_NWK;MAX_BINDING_CLUSTER_IDS=4</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__IAR_SYSTEMS_ICC__=8;ZTOOL_P1;MT_TASK;MT_SYS_FUNC;MT_ZDO_FUNC;MAC_CFG_APP_PENDING_QUEUE=TRUE;__near_func=;MAC_CFG_TX_DATA_MAX=5;MAC_CFG_TX_MAX=8;MAC_CFG_RX_MAX=5;ZDO_COORDINATOR;RTR_NWK;MAX_BINDING_CLUSTER_IDS=4</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>.\;..\Source;..\..\ZMain\TI2530DB;..\..\..\Components;..\..\..\Components\hal\include;..\..\..\Components\hal\target\CC2530EB;..\..\..\Components\mac\include;..\..\..\Components\mac\high_level;..\..\..\Components\mac\low_level\srf04;..\..\..\Components\mac\low_level\srf04\single_chip;..\..\..\Components\mt;..\..\..\Components\osal\include;..\..\..\Components\services\saddr;..\..\..\Components\services\sdata;..\..\..\Components\stack\af;..\..\..\Components\stack\nwk;..\..\..\Components\stack\sapi;..\..\..\Components\stack\sec;..\..\..\Components\stack\sys;..\..\..\Components\stack\zdo;..\..\..\Components\zmac;..\..\..\Components\zmac\f8w</AdditionalIncludeDirectories>
     </ClCompile>
@@ -302,7 +302,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>__IAR_SYSTEMS_ICC__;ZTOOL_P1;MT_TASK;MT_SYS_FUNC;MT_ZDO_FUNC;MAC_CFG_APP_PENDING_QUEUE=TRUE;MAC_CFG_TX_DATA_MAX=5;MAC_CFG_TX_MAX=8;MAC_CFG_RX_MAX=5;RTR_NWK;MAX_BINDING_CLUSTER_IDS=4</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__near_func=;__intrinsic=;__code=;__PTRDIFF_T_TYPE__=signed char;__SIZE_T_TYPE__=unsigned char;__IAR_SYSTEMS_ICC__=8;ZTOOL_P1;MT_TASK;MT_SYS_FUNC;MT_ZDO_FUNC;MAC_CFG_APP_PENDING_QUEUE=TRUE;MAC_CFG_TX_DATA_MAX=5;MAC_CFG_TX_MAX=8;MAC_CFG_RX_MAX=5;RTR_NWK;MAX_BINDING_CLUSTER_IDS=4</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>.\;..\Source;..\..\ZMain\TI2530DB;..\..\..\Components;..\..\..\Components\hal\include;..\..\..\Components\hal\target\CC2530EB;..\..\..\Components\mac\include;..\..\..\Components\mac\high_level;..\..\..\Components\mac\low_level\srf04;..\..\..\Components\mac\low_level\srf04\single_chip;..\..\..\Components\mt;..\..\..\Components\osal\include;..\..\..\Components\services\saddr;..\..\..\Components\services\sdata;..\..\..\Components\stack\af;..\..\..\Components\stack\nwk;..\..\..\Components\stack\sapi;..\..\..\Components\stack\sec;..\..\..\Components\stack\sys;..\..\..\Components\stack\zdo;..\..\..\Components\zmac;..\..\..\Components\zmac\f8w</AdditionalIncludeDirectories>
     </ClCompile>
