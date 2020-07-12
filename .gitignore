@@ -6,3 +6,4 @@
 /.vscode
 /Projects/SampleApp/CC2530DB/*.user
 /Projects/SampleApp/CC2530DB/.vs
+*.tmp

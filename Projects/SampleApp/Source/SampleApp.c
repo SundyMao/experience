@@ -91,6 +91,7 @@ reception of the flash command.
 * GLOBAL VARIABLES
 */
 uint8 AppTitle[] = "ALD2530 LED"; //应用程序名称
+uint8 SampleApp_serialPort = 0;
 
 // This list should be filled with Application specific Cluster IDs.
 const cId_t SampleApp_ClusterList[AppClusterId_max] =
@@ -156,6 +157,9 @@ void SampleApp_SendPeriodicMessage( void );
 void SampleApp_SendFlashMessage( uint16 flashTime );
 void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, uint8 dataSize);
 
+void SampleApp_initSerial(void);
+void SampleApp_serialCallback(uint8 port, uint8 event);
+
 /*********************************************************************
 * NETWORK LAYER CALLBACKS
 */
@@ -183,31 +187,7 @@ void SampleApp_Init(uint8 task_id)
 	SampleApp_TaskID = task_id;					//osal分配的任务ID随着用户添加任务的增多而改变
 	SampleApp_NwkState = DEV_INIT;				//设备状态设定为ZDO层中定义的初始化状态
 	SampleApp_TransID = 0;						//消息发送ID（多消息时有顺序之分）
-	
-	// Device hardware initialization can be added here or in main() (Zmain.c).
-	// If the hardware is application specific - add it here.
-	// If the hardware is other parts of the device add it in main().
-	
-#if defined ( BUILD_ALL_DEVICES )
-	// The "Demo" target is setup to have BUILD_ALL_DEVICES and HOLD_AUTO_START
-	// We are looking at a jumper (defined in SampleAppHw.c) to be jumpered
-	// together - if they are - we will start up a coordinator. Otherwise,
-	// the device will start as a router.
-	if (readCoordinatorJumper())
-		zgDeviceLogicalType = ZG_DEVICETYPE_COORDINATOR;
-	else
-		zgDeviceLogicalType = ZG_DEVICETYPE_ROUTER;
-#endif // BUILD_ALL_DEVICES
-	
-	//该段的意思是，如果设置了HOLD_AUTO_START宏定义，将会在启动芯片的时候会暂停启动
-	//流程，只有外部触发以后才会启动芯片。其实就是需要一个按钮触发它的启动流程。  
-#if defined ( HOLD_AUTO_START )
-	// HOLD_AUTO_START is a compile option that will surpress ZDApp
-	//  from starting the device and wait for the application to
-	//  start the device.
-	ZDOInitDevice(0);
-#endif
-	
+
 	// Setup for the periodic message's destination address 设置发送数据的方式和目的地址寻址模式
 	// Broadcast to everyone 发送模式:广播发送
 	SampleApp_Periodic_DstAddr.addrMode = (afAddrMode_t)afAddrBroadcast;				//广播
@@ -233,16 +213,13 @@ void SampleApp_Init(uint8 task_id)
 	afRegister( &SampleApp_epDesc );    //向AF层登记描述符
 	
 	// Register for all key events - This app will handle all key events
-	RegisterForKeys( SampleApp_TaskID ); // 登记所有的按键事件
-	
+	RegisterForKeys(SampleApp_TaskID); // 登记所有的按键事件
+        
+        SampleApp_initSerial();
 	// By default, all devices start out in Group 1
 	SampleApp_Group.ID = 0x0001;//组号
 	osal_memcpy( SampleApp_Group.name, "Group 1", 7  );//设定组名
 	aps_AddGroup( SAMPLEAPP_ENDPOINT, &SampleApp_Group );//把该组登记添加到APS中
-	
-#if defined ( LCD_SUPPORTED )
-	HalLcdWriteString( "SampleApp", HAL_LCD_LINE_1 ); //如果支持LCD，显示提示信息
-#endif
 }
 
 /*********************************************************************
@@ -520,6 +497,32 @@ void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, u
 	else
 	{
 		// Error occurred in request to send.
+	}
+}
+
+void SampleApp_initSerial(void)
+{
+	halUARTCfg_t uartConfig;
+	uartConfig.configured           = TRUE;              // 2x30 don't care - see uart driver.
+	uartConfig.baudRate             = HAL_UART_BR_19200;
+	uartConfig.flowControl          = FALSE;
+	uartConfig.flowControlThreshold = MT_UART_DEFAULT_THRESHOLD;	// 2x30 don't care - see uart driver.
+	uartConfig.rx.maxBufSize        = MT_UART_DEFAULT_MAX_RX_BUFF;	// 2x30 don't care - see uart driver.
+	uartConfig.tx.maxBufSize        = MT_UART_DEFAULT_MAX_TX_BUFF;	// 2x30 don't care - see uart driver.
+	uartConfig.idleTimeout          = MT_UART_DEFAULT_IDLE_TIMEOUT;   // 2x30 don't care - see uart driver.
+	uartConfig.intEnable            = TRUE;              // 2x30 don't care - see uart driver.
+	uartConfig.callBackFunc         = SampleApp_serialCallback;
+	HalUARTOpen(SampleApp_serialPort, &uartConfig);
+}
+
+void SampleApp_serialCallback(uint8 port, uint8 event)
+{
+	uint8 buffer[128];
+	if (port == SampleApp_serialPort)
+	{
+		// serial echo
+		uint16 recvSize = HalUARTRead(port, buffer, 128);
+		HalUARTWrite(port, buffer, recvSize);
 	}
 }
 
