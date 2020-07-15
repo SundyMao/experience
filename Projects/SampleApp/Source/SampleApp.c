@@ -157,8 +157,8 @@ void SampleApp_SendPeriodicMessage( void );
 void SampleApp_SendFlashMessage( uint16 flashTime );
 void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, uint8 dataSize);
 
-void SampleApp_initSerial(void);
-void SampleApp_serialCallback(uint8 port, uint8 event);
+void SampleApp_initSerialPort(void);
+void SampleApp_serialPortCallback(uint8 port, uint8 event);
 
 /*********************************************************************
 * NETWORK LAYER CALLBACKS
@@ -190,16 +190,16 @@ void SampleApp_Init(uint8 task_id)
 
 	// Setup for the periodic message's destination address 设置发送数据的方式和目的地址寻址模式
 	// Broadcast to everyone 发送模式:广播发送
-	SampleApp_Periodic_DstAddr.addrMode = (afAddrMode_t)afAddrBroadcast;				//广播
+	SampleApp_Periodic_DstAddr.addrMode = afAddrBroadcast;              				//广播
 	SampleApp_Periodic_DstAddr.endPoint = SAMPLEAPP_ENDPOINT;							//指定端点号
 	SampleApp_Periodic_DstAddr.addr.shortAddr = 0xFFFF;									//指定目的网络地址为广播地址
 	
 	// Setup for the flash command's destination address - Group 1 组播发送
-	SampleApp_Flash_DstAddr.addrMode = (afAddrMode_t)afAddrGroup;						//组寻址
+	SampleApp_Flash_DstAddr.addrMode = afAddrGroup;                                     //组寻址
 	SampleApp_Flash_DstAddr.endPoint = SAMPLEAPP_ENDPOINT;								//指定端点号
 	SampleApp_Flash_DstAddr.addr.shortAddr = SAMPLEAPP_FLASH_GROUP;						//组号0x0001
 	
-	SampleApp_P2P_DstAddr.addrMode = (afAddrMode_t)Addr16Bit;							// 点播
+	SampleApp_P2P_DstAddr.addrMode = afAddr16Bit;                                       // 点播
 	SampleApp_P2P_DstAddr.endPoint = SAMPLEAPP_ENDPOINT; 
 	SampleApp_P2P_DstAddr.addr.shortAddr = 0x0000;										// 协调器地址
 	
@@ -214,10 +214,10 @@ void SampleApp_Init(uint8 task_id)
 	
 	// Register for all key events - This app will handle all key events
 	RegisterForKeys(SampleApp_TaskID); // 登记所有的按键事件
-        
-        SampleApp_initSerial();
-	// By default, all devices start out in Group 1
-	SampleApp_Group.ID = 0x0001;//组号
+
+    SampleApp_initSerialPort();
+    // By default, all devices start out in Group 1
+    SampleApp_Group.ID = 0x0001;//组号
 	osal_memcpy( SampleApp_Group.name, "Group 1", 7  );//设定组名
 	aps_AddGroup( SAMPLEAPP_ENDPOINT, &SampleApp_Group );//把该组登记添加到APS中
 }
@@ -489,8 +489,7 @@ void SampleApp_SendFlashMessage( uint16 flashTime )
 */
 void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, uint8 dataSize)
 {
-	if (AF_DataRequest(&SampleApp_Periodic_DstAddr, &SampleApp_epDesc,
-						clusterId, dataSize, data,
+	if (AF_DataRequest(&SampleApp_Periodic_DstAddr, &SampleApp_epDesc, clusterId, dataSize, data,
 						&SampleApp_TransID, AF_DISCV_ROUTE, AF_DEFAULT_RADIUS ) == afStatus_SUCCESS )
 	{
 	}
@@ -500,7 +499,7 @@ void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, u
 	}
 }
 
-void SampleApp_initSerial(void)
+void SampleApp_initSerialPort(void)
 {
 	halUARTCfg_t uartConfig;
 	uartConfig.configured           = TRUE;              // 2x30 don't care - see uart driver.
@@ -511,11 +510,11 @@ void SampleApp_initSerial(void)
 	uartConfig.tx.maxBufSize        = MT_UART_DEFAULT_MAX_TX_BUFF;	// 2x30 don't care - see uart driver.
 	uartConfig.idleTimeout          = MT_UART_DEFAULT_IDLE_TIMEOUT;   // 2x30 don't care - see uart driver.
 	uartConfig.intEnable            = TRUE;              // 2x30 don't care - see uart driver.
-	uartConfig.callBackFunc         = SampleApp_serialCallback;
+	uartConfig.callBackFunc         = SampleApp_serialPortCallback;
 	HalUARTOpen(SampleApp_serialPort, &uartConfig);
 }
 
-void SampleApp_serialCallback(uint8 port, uint8 event)
+void SampleApp_serialPortCallback(uint8 port, uint8 event)
 {
 	uint8 buffer[128];
 	if (port == SampleApp_serialPort)
