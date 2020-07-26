@@ -156,6 +156,7 @@ void SampleApp_MessageMSGCB( afIncomingMSGPacket_t *pckt );
 void SampleApp_SendPeriodicMessage( void );
 void SampleApp_SendFlashMessage( uint16 flashTime );
 void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, uint8 dataSize);
+bool SampleApp_SendP2PMsg(uint16 shortAddr, uint8* msg, uint16 length);
 
 void SampleApp_initSerialPort(void);
 void SampleApp_serialPortCallback(uint8 port, uint8 event);
@@ -268,9 +269,11 @@ uint16 SampleApp_ProcessEvent(uint8 task_id, uint16 events)
 				if ((SampleApp_NwkState == DEV_ROUTER) || (SampleApp_NwkState == DEV_END_DEVICE))
 				{
 					// Start sending the periodic message in a regular interval.
-					// 这个定时器只是为发送周期信息开启的，设备启动初始化后从这里开始
-					// 触发第一个周期信息的发送，然后周而复始下去
 					osal_start_timerEx(SampleApp_TaskID, SAMPLEAPP_SEND_PERIODIC_MSG_EVT, SAMPLEAPP_SEND_PERIODIC_MSG_TIMEOUT );
+                    // 组网成功后终端和路由器给 协调器 发送 地址信息
+                    char addrStr[32];
+                    osal_itoa(NLME_GetShortAddr(), (uint8*)addrStr, 10);
+                    SampleApp_SendP2PMsg(0x0000, (uint8*)addrStr, osal_strlen(addrStr));
 				}
 				else
 				{
@@ -380,13 +383,9 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 			osal_memcpy(buf, pkt->cmd.Data, 2); //复制数据到缓冲区中
 			
 			if(buf[0]=='D' && buf[1]=='1')				//判断收到的数据是否为"D1"
-			{
 				HalLedBlink(HAL_LED_1, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
-			}
 			else
-			{
 				HalLedSet(HAL_LED_1, HAL_LED_MODE_ON);
-			}
 		}
 		break;
 		
@@ -396,21 +395,16 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 			HalLedBlink(HAL_LED_4, 4, 50, (flashTime / 4));
 		}
 		break;
-		
 	case AppClusterId_userDefined:
 		{
 #if defined(ZDO_COORDINATOR)				// 协调器响应
-			;
+            HalUARTWrite(0, pkt->cmd.Data, pkt->cmd.DataLength);
 #else										// 终端响应
 			uint8 data = (uint8)pkt->cmd.Data[0];
 			if (data != 0)		// blink
-			{
 				HalLedBlink(HAL_LED_1, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
-			}
 			else if(data == 0)	// no blink
-			{
 				HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
-			}
 #endif
 		}
 		break;
@@ -432,7 +426,6 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 void SampleApp_SendPeriodicMessage(void)
 {
 	byte SendData[3]="D1";
-	
 	// 调用AF_DataRequest将数据无线广播出去
 	if(AF_DataRequest(&SampleApp_Periodic_DstAddr,					// 发送目的地址＋端点地址和传送模式
                        &SampleApp_epDesc,							// 源(答复或确认)终端的描述（比如操作系统中任务ID等）源EP
@@ -499,30 +492,44 @@ void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, u
 	}
 }
 
+bool SampleApp_SendP2PMsg(uint16 shortAddr, uint8* msg, uint16 length)
+{
+    afAddrType_t dstAddr;
+    dstAddr.addrMode = afAddr16Bit;                                       // 点播
+    dstAddr.endPoint = SAMPLEAPP_ENDPOINT; 
+    dstAddr.addr.shortAddr = shortAddr;
+
+    return AF_DataRequest(&dstAddr, &SampleApp_epDesc, AppClusterId_userDefined,
+        length, msg, &SampleApp_TransID, AF_DISCV_ROUTE, AF_DEFAULT_RADIUS ) == afStatus_SUCCESS;
+}
+
 void SampleApp_initSerialPort(void)
 {
 	halUARTCfg_t uartConfig;
 	uartConfig.configured           = TRUE;              // 2x30 don't care - see uart driver.
 	uartConfig.baudRate             = HAL_UART_BR_19200;
 	uartConfig.flowControl          = FALSE;
-	uartConfig.flowControlThreshold = MT_UART_DEFAULT_THRESHOLD;	// 2x30 don't care - see uart driver.
-	uartConfig.rx.maxBufSize        = MT_UART_DEFAULT_MAX_RX_BUFF;	// 2x30 don't care - see uart driver.
-	uartConfig.tx.maxBufSize        = MT_UART_DEFAULT_MAX_TX_BUFF;	// 2x30 don't care - see uart driver.
-	uartConfig.idleTimeout          = MT_UART_DEFAULT_IDLE_TIMEOUT;   // 2x30 don't care - see uart driver.
-	uartConfig.intEnable            = TRUE;              // 2x30 don't care - see uart driver.
+//	uartConfig.flowControlThreshold = MT_UART_DEFAULT_THRESHOLD;	// 2x30 don't care - see uart driver.
+//	uartConfig.rx.maxBufSize        = MT_UART_DEFAULT_MAX_RX_BUFF;	// 2x30 don't care - see uart driver.
+//	uartConfig.tx.maxBufSize        = MT_UART_DEFAULT_MAX_TX_BUFF;	// 2x30 don't care - see uart driver.
+//	uartConfig.idleTimeout          = MT_UART_DEFAULT_IDLE_TIMEOUT;   // 2x30 don't care - see uart driver.
+//	uartConfig.intEnable            = TRUE;              // 2x30 don't care - see uart driver.
 	uartConfig.callBackFunc         = SampleApp_serialPortCallback;
 	HalUARTOpen(SampleApp_serialPort, &uartConfig);
 }
 
 void SampleApp_serialPortCallback(uint8 port, uint8 event)
 {
-	uint8 buffer[128];
-	if (port == SampleApp_serialPort)
-	{
-		// serial echo
-		uint16 recvSize = HalUARTRead(port, buffer, 128);
-		HalUARTWrite(port, buffer, recvSize);
-	}
+#if defined(ZDO_COORDINATOR)				// 协调器响应
+    uint8 buffer[128];
+    if (event & (HAL_UART_RX_FULL | HAL_UART_RX_ABOUT_FULL | HAL_UART_RX_TIMEOUT))
+    {
+        // serial echo
+        uint16 recvSize = HalUARTRead(SampleApp_serialPort, buffer, 128);
+        HalUARTWrite(port, buffer, recvSize);
+    }
+#else										// 终端响应
+#endif
 }
 
 /*********************************************************************

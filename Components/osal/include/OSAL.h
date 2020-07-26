@@ -229,6 +229,11 @@ typedef void * osal_msg_q_t;
   extern int osal_strlen( char *pString );
 
   /*
+   * uint to string
+   */
+  char* osal_itoa(uint16 num, uint8 *buf, uint8 radix);
+
+  /*
    * Memory copy
    */
   extern void *osal_memcpy( void*, const void GENERIC *, unsigned int );

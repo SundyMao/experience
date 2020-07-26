@@ -128,6 +128,12 @@ int osal_strlen( char *pString )
   return (int)( strlen( pString ) );
 }
 
+char* osal_itoa(uint16 num, uint8 *buf, uint8 radix)
+{
+    _itoa(num, buf, radix);
+    return buf;
+}
+
 /*********************************************************************
  * @fn      osal_memcpy
  *
