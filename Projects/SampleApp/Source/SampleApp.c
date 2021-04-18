@@ -157,6 +157,7 @@ void SampleApp_SendPeriodicMessage( void );
 void SampleApp_SendFlashMessage( uint16 flashTime );
 void SampleApp_SendPeriodicMessageWithClusterId(uint16 clusterId, uint8* data, uint8 dataSize);
 bool SampleApp_SendP2PMsg(uint16 shortAddr, uint8* msg, uint16 length);
+bool SampleApp_sendBroadcastMessage(uint8* message, uint16 length);
 
 void SampleApp_initSerialPort(void);
 void SampleApp_serialPortCallback(uint8 port, uint8 event);
@@ -215,12 +216,13 @@ void SampleApp_Init(uint8 task_id)
 	
 	// Register for all key events - This app will handle all key events
 	RegisterForKeys(SampleApp_TaskID); // 登记所有的按键事件
-
+#if defined(ZDO_COORDINATOR)
     SampleApp_initSerialPort();
+#endif
     // By default, all devices start out in Group 1
     SampleApp_Group.ID = 0x0001;//组号
-	osal_memcpy( SampleApp_Group.name, "Group 1", 7  );//设定组名
-	aps_AddGroup( SAMPLEAPP_ENDPOINT, &SampleApp_Group );//把该组登记添加到APS中
+    osal_memcpy( SampleApp_Group.name, "Group 1", 7  );//设定组名
+    aps_AddGroup( SAMPLEAPP_ENDPOINT, &SampleApp_Group );//把该组登记添加到APS中
 }
 
 /*********************************************************************
@@ -374,42 +376,45 @@ void SampleApp_HandleKeys(uint8 shift, uint8 keys)
 //接收数据，参数为接收到的数据
 void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 {
-	switch (pkt->clusterId) //判断簇ID
-	{
-	case AppClusterId_periodic:					//收到广播数据
-		{
-			byte buf[3];
-			osal_memset(buf, 0 , 3);
-			osal_memcpy(buf, pkt->cmd.Data, 2); //复制数据到缓冲区中
-			
-			if(buf[0]=='D' && buf[1]=='1')				//判断收到的数据是否为"D1"
-				HalLedBlink(HAL_LED_1, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
-			else
-				HalLedSet(HAL_LED_1, HAL_LED_MODE_ON);
-		}
-		break;
-		
-	case AppClusterId_flash:					//收到组播数据
-		{
-			uint16 flashTime = BUILD_UINT16(pkt->cmd.Data[1], pkt->cmd.Data[2]);
-			HalLedBlink(HAL_LED_4, 4, 50, (flashTime / 4));
-		}
-		break;
-	case AppClusterId_userDefined:
-		{
-#if defined(ZDO_COORDINATOR)				// 协调器响应
+    switch (pkt->clusterId) //判断簇ID
+    {
+    case AppClusterId_periodic:					//收到广播数据
+        {
+            byte buf[3];
+            osal_memset(buf, 0 , 3);
+            osal_memcpy(buf, pkt->cmd.Data, 2); //复制数据到缓冲区中
+
+            if(buf[0]=='D' && buf[1]=='1')				//判断收到的数据是否为"D1"
+                HalLedBlink(HAL_LED_1, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
+            else
+                HalLedSet(HAL_LED_1, HAL_LED_MODE_ON);
+        }
+        break;
+    case AppClusterId_flash:					//收到组播数据
+        {
+            uint16 flashTime = BUILD_UINT16(pkt->cmd.Data[1], pkt->cmd.Data[2]);
+            HalLedBlink(HAL_LED_4, 4, 50, (flashTime / 4));
+        }
+        break;
+    case AppClusterId_userDefined:
+        {
+#if defined(ZDO_COORDINATOR)                // 协调器响应
             HalUARTWrite(0, pkt->cmd.Data, pkt->cmd.DataLength);
-#else										// 终端响应
-			uint8 data = (uint8)pkt->cmd.Data[0];
-			if (data != 0)		// blink
-				HalLedBlink(HAL_LED_1, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
-			else if(data == 0)	// no blink
-				HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
+#else                                       // 终端响应
+
+            SampleApp_SendP2PMsg(0x00, pkt->cmd.Data, pkt->cmd.DataLength);
+            /*
+            uint8 data = (uint8)pkt->cmd.Data[0];
+            if (data != 0)      // blink
+                HalLedBlink(HAL_LED_1, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
+            else if(data == 0)  // no blink
+                HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
+            */
 #endif
-		}
-		break;
-	default:
-		break;
+        }
+        break;
+    default:
+        break;
 	}
 }
 
@@ -503,33 +508,44 @@ bool SampleApp_SendP2PMsg(uint16 shortAddr, uint8* msg, uint16 length)
         length, msg, &SampleApp_TransID, AF_DISCV_ROUTE, AF_DEFAULT_RADIUS ) == afStatus_SUCCESS;
 }
 
+bool SampleApp_sendBroadcastMessage(uint8* message, uint16 length)
+{
+    return AF_DataRequest(&SampleApp_Periodic_DstAddr, &SampleApp_epDesc, AppClusterId_userDefined,
+        length, message, &SampleApp_TransID, AF_DISCV_ROUTE, AF_DEFAULT_RADIUS) == afStatus_SUCCESS;
+}
+
 void SampleApp_initSerialPort(void)
 {
-	halUARTCfg_t uartConfig;
-	uartConfig.configured           = TRUE;              // 2x30 don't care - see uart driver.
-	uartConfig.baudRate             = HAL_UART_BR_19200;
-	uartConfig.flowControl          = FALSE;
-//	uartConfig.flowControlThreshold = MT_UART_DEFAULT_THRESHOLD;	// 2x30 don't care - see uart driver.
-//	uartConfig.rx.maxBufSize        = MT_UART_DEFAULT_MAX_RX_BUFF;	// 2x30 don't care - see uart driver.
-//	uartConfig.tx.maxBufSize        = MT_UART_DEFAULT_MAX_TX_BUFF;	// 2x30 don't care - see uart driver.
-//	uartConfig.idleTimeout          = MT_UART_DEFAULT_IDLE_TIMEOUT;   // 2x30 don't care - see uart driver.
-//	uartConfig.intEnable            = TRUE;              // 2x30 don't care - see uart driver.
-	uartConfig.callBackFunc         = SampleApp_serialPortCallback;
-	HalUARTOpen(SampleApp_serialPort, &uartConfig);
+    halUARTCfg_t uartConfig;
+    uartConfig.configured           = TRUE;              // 2x30 don't care - see uart driver.
+    uartConfig.baudRate             = HAL_UART_BR_19200;
+    uartConfig.flowControl          = FALSE;
+//  uartConfig.flowControlThreshold = MT_UART_DEFAULT_THRESHOLD;	// 2x30 don't care - see uart driver.
+//  uartConfig.rx.maxBufSize        = MT_UART_DEFAULT_MAX_RX_BUFF;	// 2x30 don't care - see uart driver.
+//  uartConfig.tx.maxBufSize        = MT_UART_DEFAULT_MAX_TX_BUFF;	// 2x30 don't care - see uart driver.
+//  uartConfig.idleTimeout          = MT_UART_DEFAULT_IDLE_TIMEOUT;   // 2x30 don't care - see uart driver.
+//  uartConfig.intEnable            = TRUE;              // 2x30 don't care - see uart driver.
+    uartConfig.callBackFunc         = SampleApp_serialPortCallback;
+    HalUARTOpen(SampleApp_serialPort, &uartConfig);
 }
 
 void SampleApp_serialPortCallback(uint8 port, uint8 event)
 {
-#if defined(ZDO_COORDINATOR)				// 协调器响应
     uint8 buffer[128];
+    uint16 recvSize = 0;
     if (event & (HAL_UART_RX_FULL | HAL_UART_RX_ABOUT_FULL | HAL_UART_RX_TIMEOUT))
+        recvSize = HalUARTRead(SampleApp_serialPort, buffer, 128);
+
+    if (recvSize > 0)
     {
-        // serial echo
-        uint16 recvSize = HalUARTRead(SampleApp_serialPort, buffer, 128);
-        HalUARTWrite(port, buffer, recvSize);
-    }
-#else										// 终端响应
+#if defined(ZDO_COORDINATOR)                // 协调器响应
+        // 将数据广播到所有的节点
+        SampleApp_sendBroadcastMessage(buffer, recvSize);
+#else                                       // 终端响应
+        // 数据回传到协调器
+        SampleApp_SendP2PMsg(0x00, buffer, recvSize);
 #endif
+    }
 }
 
 /*********************************************************************

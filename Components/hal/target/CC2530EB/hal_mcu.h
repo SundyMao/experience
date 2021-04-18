@@ -22,7 +22,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED ìAS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+  PROVIDED ÊèÇS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -157,8 +157,8 @@ typedef unsigned char halIntState_t;
 #define HFRC_STB   BV(5)  /* HFRCOSC: powered, stable=1 */
 
 /* SLEEPCMD and SLEEPSTA bit definitions */
-#define OSC_PD     BV(2)  /* 0: Both oscillators powered up and stable
-                           * 1: oscillators not stable */
+#define OSC_PD     BV(2)  /* 0: Both oscillators powered up and stable */
+                          /* 1: oscillators not stable */
 
 /* CLKCONCMD bit definitions */
 #define OSC              BV(6)
@@ -168,9 +168,9 @@ typedef unsigned char halIntState_t;
 #define CLKCONCMD_16MHZ  (CLKSPD(1) | TICKSPD(1) | OSC)
 
 /* STLOAD */
-#define LDRDY            BV(0) /* Load Ready. This bit is 0 while the sleep timer
-                                * loads the 24-bit compare value and 1 when the sleep
-                                * timer is ready to start loading a newcompare value. */
+#define LDRDY            BV(0) /* Load Ready. This bit is 0 while the sleep timer */
+                               /* loads the 24-bit compare value and 1 when the sleep */
+                               /* timer is ready to start loading a newcompare value. */
 
 #ifdef POWER_SAVING
 extern volatile __data uint8 halSleepPconValue;

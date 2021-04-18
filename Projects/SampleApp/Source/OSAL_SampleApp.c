@@ -105,30 +105,30 @@ uint16 *tasksEvents;
  */
 void osalInitTasks( void )
 {
-  uint8 taskID = 0;
+    uint8 taskID = 0;
 
-  // 分配内存，返回指向缓冲区的指针
-  tasksEvents = (uint16 *)osal_mem_alloc( sizeof( uint16 ) * tasksCnt);
-  // 设置所分配的内存空间单元值为0
-  osal_memset( tasksEvents, 0, (sizeof( uint16 ) * tasksCnt));
+    // 分配内存，返回指向缓冲区的指针
+    tasksEvents = (uint16 *)osal_mem_alloc( sizeof( uint16 ) * tasksCnt);
+    // 设置所分配的内存空间单元值为0
+    osal_memset( tasksEvents, 0, (sizeof( uint16 ) * tasksCnt));
 
-  // 任务优先级由高向低依次排列，高优先级对应taskID 的值反而小
-  macTaskInit( taskID++ );  //macTaskInit(0) ，用户不需考虑
-  nwk_init( taskID++ );     //nwk_init(1)，用户不需考虑
-  Hal_Init( taskID++ );     //Hal_Init(2) ，用户需考虑
+    // 任务优先级由高向低依次排列，高优先级对应taskID 的值反而小
+    macTaskInit( taskID++ );  //macTaskInit(0) ，用户不需考虑
+    nwk_init( taskID++ );     //nwk_init(1)，用户不需考虑
+    Hal_Init( taskID++ );     //Hal_Init(2) ，用户需考虑
 #if defined( MT_TASK )
-  MT_TaskInit( taskID++ );
+    MT_TaskInit( taskID++ );
 #endif
-  APS_Init( taskID++ );      //APS_Init(3) ，用户不需考虑
+    APS_Init( taskID++ );      //APS_Init(3) ，用户不需考虑
 #if defined ( ZIGBEE_FRAGMENTATION )
-  APSF_Init( taskID++ );
+    APSF_Init( taskID++ );
 #endif
-  ZDApp_Init( taskID++ );    //ZDApp_Init(4) ，用户需考虑
+    ZDApp_Init( taskID++ );    //ZDApp_Init(4) ，用户需考虑
 #if defined ( ZIGBEE_FREQ_AGILITY ) || defined ( ZIGBEE_PANID_CONFLICT )
-  ZDNwkMgr_Init( taskID++ );
+    ZDNwkMgr_Init( taskID++ );
 #endif
-  //用户创建的任务
-  SampleApp_Init( taskID );  // SampleApp_Init _Init(5) ，用户需考虑
+    //用户创建的任务
+    SampleApp_Init( taskID );  // SampleApp_Init _Init(5) ，用户需考虑
 }
 
 /*********************************************************************
