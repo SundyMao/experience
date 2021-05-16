@@ -273,9 +273,8 @@ uint16 SampleApp_ProcessEvent(uint8 task_id, uint16 events)
 					// Start sending the periodic message in a regular interval.
 					osal_start_timerEx(SampleApp_TaskID, SAMPLEAPP_SEND_PERIODIC_MSG_EVT, SAMPLEAPP_SEND_PERIODIC_MSG_TIMEOUT );
                     // 组网成功后终端和路由器给 协调器 发送 地址信息
-                    char addrStr[32];
-                    osal_itoa(NLME_GetShortAddr(), (uint8*)addrStr, 10);
-                    SampleApp_SendP2PMsg(0x0000, (uint8*)addrStr, osal_strlen(addrStr));
+                    uint16 addr = NLME_GetShortAddr();
+                    SampleApp_SendP2PMsg(0x0000, (uint8*)&addr, sizeof(addr));
 				}
 				else
 				{
@@ -403,13 +402,7 @@ void SampleApp_MessageMSGCB(afIncomingMSGPacket_t *pkt)
 #else                                       // 终端响应
 
             SampleApp_SendP2PMsg(0x00, pkt->cmd.Data, pkt->cmd.DataLength);
-            /*
-            uint8 data = (uint8)pkt->cmd.Data[0];
-            if (data != 0)      // blink
-                HalLedBlink(HAL_LED_1, 0, 50, 500);	//如果是则Led1间隔500ms闪烁
-            else if(data == 0)  // no blink
-                HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
-            */
+            HalLedBlink(HAL_LED_1, 2, 50, 500);
 #endif
         }
         break;
